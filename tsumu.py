@@ -13,6 +13,8 @@ def resize(img):
     return window_width, window_height
 
 def main():
+    # TODO 処理の最初でスクショを取得する
+    # 取得したスクショをいじる
     img = cv2.imread('./img/tumu.jpg',0)
     color_img = cv2.imread('./img/tumu.jpg')
     ancestor = cv2.imread('./img/tumu.jpg')
@@ -53,6 +55,10 @@ def main():
         dst = cv2.fillPoly(ancestor, pts =[pts], color=(b,g,r))
         center_list = cv2.fillPoly(i, pts =[pts], color=(b,g,r))
 
+    # TODO 同じ色で、円が3つ以上重なっている箇所を検知する
+    # TODO 検知した3つ以上の円の中心点を取得する。
+    # ここからPCのカーソルを操作する
+    # TODO 中心点を繋ぐ処理　
 
     dst_resize = resize(dst)
     cv2.namedWindow('result', cv2.WINDOW_NORMAL)
