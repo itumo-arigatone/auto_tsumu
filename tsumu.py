@@ -12,12 +12,31 @@ def resize(img):
     window_height = int(img.shape[0] * scale)
     return window_width, window_height
 
+# 中心周辺の色を平均可してツムを色にする
+def averageColor(crop, ancestor):
+    # RGB平均値を出力
+    # flattenで一次元化しmeanで平均を取得 
+    b = crop.T[0].flatten().mean()
+    g = crop.T[1].flatten().mean()
+    r = crop.T[2].flatten().mean()
+
+    if b == "nan" or g == "nan" or r == "nan":
+        b = 255
+        g = 255
+        r = 255
+    color = {
+        "blue": b,
+        "green": g,
+        "red":r
+    }
+    return color
+
 def main():
     # TODO 処理の最初でスクショを取得する
     # 取得したスクショをいじる
-    img = cv2.imread('./img/tumu.jpg',0)
-    color_img = cv2.imread('./img/tumu.jpg')
-    ancestor = cv2.imread('./img/tumu.jpg')
+    img = cv2.imread('./img/tumu1.jpg',0)
+    color_img = cv2.imread('./img/tumu1.jpg')
+    ancestor = cv2.imread('./img/tumu1.jpg')
     cimg = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
 
     a = 4
@@ -25,50 +44,49 @@ def main():
     lut = [ np.uint8(255.0 / (1 + math.exp(-a * (i - 128.) / 255.))) for i in range(256)] 
     result_image = np.array( [ lut[value] for value in image.flat], dtype=np.uint8 )
     cimg = result_image.reshape(image.shape)
+    
     circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,100,param1=65,param2=28,minRadius=67,maxRadius=130)
     circles = np.uint16(np.around(circles))
     center_list = []
-
     for i in circles[0,:]:
         # draw the outer circle 
         # color version
-        cv2.circle(color_img,(i[0],i[1]),i[2],(0,255,0),8)
+        # 円は色分けの範囲より大きめにする
+        circle_size = math.floor(i[2]*1.35)
+        cv2.circle(color_img,(i[0],i[1]),circle_size,(0,255,0),8)
         # draw the center of the circle
         cv2.circle(color_img,(i[0],i[1]),2,(0,0,255),7)
-        # push crop image
-        crop = ancestor[i[1]-90:i[1]+90, i[0]-90:i[0]+90]
-        print(crop)
-        center_list.append(crop)
+        # 中心周辺の色を取得する
+        crop = ancestor[i[1]-30:i[1]+30, i[0]-30:i[0]+30]
+        color = averageColor(crop, ancestor)
 
-    for i in center_list:
-        # RGB平均値を出力
-        # flattenで一次元化しmeanで平均を取得 
-        b = i.T[0].flatten().mean()
-        g = i.T[1].flatten().mean()
-        r = i.T[2].flatten().mean()
+        center_list.append({
+            "color": color,
+            "center_x": i[0],
+            "center_y": i[1],
+        })
 
-        if b == "nan" or g == "nan" or r == "nan":
-            b = 255
-            g = 255
-            r = 255
-        pts = np.array( [ [0,0], [0,180], [180, 180], [180,0] ] )
-        dst = cv2.fillPoly(ancestor, pts =[pts], color=(b,g,r))
-        center_list = cv2.fillPoly(i, pts =[pts], color=(b,g,r))
+    for k in center_list:
+        cv2.circle(
+            color_img,
+            (k["center_x"], k["center_y"]),
+            100,
+            (k["color"]["blue"], k["color"]["green"], k["color"]["red"]),
+            -1
+        )
+
 
     # TODO 同じ色で、円が3つ以上重なっている箇所を検知する
     # TODO 検知した3つ以上の円の中心点を取得する。
     # ここからPCのカーソルを操作する
     # TODO 中心点を繋ぐ処理　
 
-    dst_resize = resize(dst)
-    cv2.namedWindow('result', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('result', dst_resize[0], dst_resize[1])
-    cv2.imshow('result', dst)
+    ############# Debug    
     size = resize(color_img)
     cv2.namedWindow('color', cv2.WINDOW_NORMAL)
     cv2.resizeWindow('color', size[0], size[1])
     cv2.imshow('color',color_img)
-
+    ############# Debug END
 
     # end process
     cv2.waitKey(0)
