@@ -24,6 +24,35 @@ def averageColor(crop, ancestor):
         b = 255
         g = 255
         r = 255
+    
+    # ダサすぎる
+    if b <= 64:
+        b = 25
+    elif 64 < b <= 128:
+        b = 75
+    elif 128 < b <=192:
+        b = 125
+    elif 192 < b <=255:
+        b = 170
+    
+    if g <= 64:
+        g = 25
+    elif 64 < g <= 128:
+        g = 75
+    elif 128 < g <=192:
+        g = 125
+    elif 192 < g <=255:
+        g = 170
+
+    if r <= 64:
+        r = 32
+    elif 64 < r <= 128:
+        r = 96
+    elif 128 < r <=192:
+        r = 160
+    elif 192 < r <=255:
+        r = 224
+
     color = {
         "blue": b,
         "green": g,
@@ -31,12 +60,17 @@ def averageColor(crop, ancestor):
     }
     return color
 
+# ダブりを消す処理
+def get_unique_list(seq):
+    seen = []
+    return [x for x in seq if x not in seen and not seen.append(x)]
+
 def main():
     # TODO 処理の最初でスクショを取得する
     # 取得したスクショをいじる
-    img = cv2.imread('./img/tumu1.jpg',0)
-    color_img = cv2.imread('./img/tumu1.jpg')
-    ancestor = cv2.imread('./img/tumu1.jpg')
+    img = cv2.imread('./img/tumu.jpg',0)
+    color_img = cv2.imread('./img/tumu.jpg')
+    ancestor = cv2.imread('./img/tumu.jpg')
     cimg = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
 
     a = 4
@@ -66,6 +100,7 @@ def main():
             "center_y": i[1],
         })
 
+    all_list = []
     for k in center_list:
         cv2.circle(
             color_img,
@@ -74,6 +109,35 @@ def main():
             (k["color"]["blue"], k["color"]["green"], k["color"]["red"]),
             -1
         )
+        # 色の種類
+        all_list.append(
+            {
+            "blue": k["color"]["blue"],
+            "green": k["color"]["green"],
+            "red": k["color"]["red"]
+            }
+        )
+
+    color_list = get_unique_list(all_list)
+    print(len(color_list))
+
+    # TODO center_list rename cercle_info
+    # 色ごとにグループ化
+    group = []
+    index = 0
+    for i in color_list:
+        sub = []
+        for j in center_list:
+            if i["blue"] == j["color"]["blue"] and i["green"] == j["color"]["green"] and i["red"] == j["color"]["red"]:
+                sub.append(j)
+        group.append(sub)
+        
+        index += 1
+
+    print(len(group))
+    print(len(group[3]))
+    print(group)
+
 
 
     # TODO 同じ色で、円が3つ以上重なっている箇所を検知する
