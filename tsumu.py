@@ -119,26 +119,33 @@ def main():
         )
 
     color_list = get_unique_list(all_list)
-    print(len(color_list))
 
     # TODO center_list rename cercle_info
     # 色ごとにグループ化
     group = []
-    index = 0
     for i in color_list:
         sub = []
         for j in center_list:
             if i["blue"] == j["color"]["blue"] and i["green"] == j["color"]["green"] and i["red"] == j["color"]["red"]:
                 sub.append(j)
-        group.append(sub)
         
-        index += 1
+        if len(sub) >= 3:
+            group.append(sub)
 
-    print(len(group))
-    print(len(group[3]))
-    print(group)
-
-
+    for i in group:
+        for j in i:
+            for k in i:
+                x = (int(j["center_x"]) - int(k["center_x"])) ** 2
+                y = (int(j["center_y"]) - int(k["center_y"])) ** 2
+                print(math.sqrt(x + y))
+                if 0 < math.sqrt(x+y) <= 250:
+                    cv2.line(
+                        color_img,
+                        (j["center_x"], j["center_y"]),
+                        (k["center_x"], k["center_y"]),
+                        (255, 0, 0),
+                        5
+                    )
 
     # TODO 同じ色で、円が3つ以上重なっている箇所を検知する
     # TODO 検知した3つ以上の円の中心点を取得する。
