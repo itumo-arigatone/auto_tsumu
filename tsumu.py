@@ -135,13 +135,16 @@ def main():
     # 色の中でも固まっているものでグループ化
     color_group = []
     near = []
+    before_one = []
+    history = []
     for i in group:
         first = []
         index = 1
-        print("before")
-        print(i)
         if len(near) == 0:
+            print("kokonann")
+            before_one = i
             for j in i:
+                i.remove(j)
                 first = j
                 color_group.append(j)
                 cv2.putText(color_img, str(index), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
@@ -163,12 +166,11 @@ def main():
             new_near = []
             # near でforを回す
             for j in near:
-                print("after")
-                print(i)
-                print(j)
-                i.remove(j)
-                print(i)
-                for k in i:
+                # 消した配列をまた消そうとしないためのif分
+                if j not in history :
+                    before_one.remove(j)
+                    history.append(j)
+                for k in before_one:
                     # すでに比較済みのものは何もしない
                     if k == first or k == j:
                         break
@@ -179,10 +181,9 @@ def main():
                         # 新たなnearができる
                         new_near.append(k)
                         color_group.append(k)
-                        cv2.circle(color_img,(k["center_x"],k["center_y"]),2,(255,0,0),7)
+                        cv2.putText(color_img, str(index), (k["center_x"], k["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (0, 255, 0), 5, cv2.LINE_AA)
 
-            if not len(new_near) == 0:
-                near = new_near
+            near = new_near
 
 
                     # 色が三個以上だったらappend
