@@ -132,23 +132,68 @@ def main():
         if len(sub) >= 3:
             group.append(sub)
 
+    # 色の中でも固まっているものでグループ化
+    color_group = []
+    near = []
     for i in group:
-        for j in i:
-            for k in i:
-                x = (int(j["center_x"]) - int(k["center_x"])) ** 2
-                y = (int(j["center_y"]) - int(k["center_y"])) ** 2
-                print(math.sqrt(x + y))
-                if 0 < math.sqrt(x+y) <= 250:
-                    cv2.line(
-                        color_img,
-                        (j["center_x"], j["center_y"]),
-                        (k["center_x"], k["center_y"]),
-                        (255, 0, 0),
-                        5
-                    )
+        first = []
+        index = 1
+        print("before")
+        print(i)
+        if len(near) == 0:
+            for j in i:
+                first = j
+                color_group.append(j)
+                cv2.putText(color_img, str(index), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
+                for k in i:
+                    if j == k:
+                        break
 
-    # TODO 同じ色で、円が3つ以上重なっている箇所を検知する
-    # TODO 検知した3つ以上の円の中心点を取得する。
+                    x = (int(j["center_x"]) - int(k["center_x"])) ** 2
+                    y = (int(j["center_y"]) - int(k["center_y"])) ** 2
+                    if 0 < math.sqrt(x+y) <= 250:
+                        near.append(k)
+                        color_group.append(k)
+                        # cv2.circle(color_img,(k["center_x"],k["center_y"]),2,(255,0,0),7)
+                        cv2.putText(color_img, str(index), (k["center_x"], k["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 5, cv2.LINE_AA)
+                        index += 1
+                if len(near) != 0:
+                    break
+        else:
+            new_near = []
+            # near でforを回す
+            for j in near:
+                print("after")
+                print(i)
+                print(j)
+                i.remove(j)
+                print(i)
+                for k in i:
+                    # すでに比較済みのものは何もしない
+                    if k == first or k == j:
+                        break
+
+                    x = (int(j["center_x"]) - int(k["center_x"])) ** 2
+                    y = (int(j["center_y"]) - int(k["center_y"])) ** 2
+                    if 0 < math.sqrt(x+y) <= 250:
+                        # 新たなnearができる
+                        new_near.append(k)
+                        color_group.append(k)
+                        cv2.circle(color_img,(k["center_x"],k["center_y"]),2,(255,0,0),7)
+
+            if not len(new_near) == 0:
+                near = new_near
+
+
+                    # 色が三個以上だったらappend
+#                    cv2.line(
+#                        color_img,
+#                        (j["center_x"], j["center_y"]),
+#                        (k["center_x"], k["center_y"]),
+#                        (255, 0, 0),
+#                        5
+#                    )
+
     # ここからPCのカーソルを操作する
     # TODO 中心点を繋ぐ処理　
 
