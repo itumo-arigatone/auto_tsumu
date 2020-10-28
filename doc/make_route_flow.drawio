@@ -1,0 +1,46 @@
+<mxfile host="65bd71144e" modified="2020-10-28T09:03:09.957Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.50.1 Chrome/83.0.4103.122 Electron/9.2.1 Safari/537.36" etag="fjgfOm6FL5t5t9Tpbuzq" version="13.8.5" type="embed">
+    <diagram id="O1e7fghPWnVBq_dMKyf7" name="Page-2">
+        <mxGraphModel dx="2118" dy="622" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="zx5n0w-G_mJ1sIlkyQok-0"/>
+                <mxCell id="zx5n0w-G_mJ1sIlkyQok-1" parent="zx5n0w-G_mJ1sIlkyQok-0"/>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-9" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.loop_limit;whiteSpace=wrap;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="-40" y="140" width="540" height="490" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-6" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.loop_limit;whiteSpace=wrap;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="20" y="270" width="450" height="310" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-0" value="&lt;div&gt;start for&lt;/div&gt;" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_1;whiteSpace=wrap;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="180" y="70" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-1" value="&lt;div&gt;テキトーにツムを選ぶ&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="180" y="160" width="100" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="zx5n0w-G_mJ1sIlkyQok-1" source="W16nwdxizNs1eoQu4IZE-2" target="W16nwdxizNs1eoQu4IZE-3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-2" value="見つけたツムを配列に入れる" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="180" y="290" width="100" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-3" value="配列に入れたやつで特定の距離のツムを取得(前プロセス)のツムは除外" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="180" y="440" width="100" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-7" value="特定の距離のツムが見つからなければループは終了する" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="290" y="520" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-8" value="線が繋げられるツムのグループを作る" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="-20" y="130" width="210" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-10" value="lengthが一番大きいグループを選択&lt;br&gt;(同じ大きさのグループがあれば配列のindexが0に近いやつを選択する)" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="130" y="650" width="200" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="W16nwdxizNs1eoQu4IZE-11" value="繋がる先が1つだけのツムを見つける" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="zx5n0w-G_mJ1sIlkyQok-1" vertex="1">
+                    <mxGeometry x="175" y="790" width="110" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="0" value="そこから繋げてく" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="zx5n0w-G_mJ1sIlkyQok-1">
+                    <mxGeometry x="175" y="930" width="110" height="100" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
