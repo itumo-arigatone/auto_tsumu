@@ -68,9 +68,10 @@ def get_unique_list(seq):
 def main():
     # TODO 処理の最初でスクショを取得する
     # 取得したスクショをいじる
-    img = cv2.imread('./img/tumu.jpg',0)
-    color_img = cv2.imread('./img/tumu.jpg')
-    ancestor = cv2.imread('./img/tumu.jpg')
+    img_path = './img/tumu.jpg'
+    img = cv2.imread(img_path,0)
+    color_img = cv2.imread(img_path)
+    ancestor = cv2.imread(img_path)
     cimg = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
 
     a = 4
