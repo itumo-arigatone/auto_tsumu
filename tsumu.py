@@ -72,29 +72,26 @@ def findNearPlaceTsumu(group):
     color_group = []
     all_color_group = []
     near = []
-    before_one = []
-    history = []
 
     # TODO all_color_groupに入っている物は比較の対象から外す様にする
+    gr = group
 
     for i in group:
-        print("groupnannkai")
-        print(i)
-        first = []
+        cercle_data = []
         # 比較に使用した物は削除する
         for already in color_group:
+            cercle_data = already
             # 比較に使用したものから比較しようとしたらcontinue
-            if i == already:
-                print("continue")
-                continue
-            if group in [already]:
-                group.remove(already)
-            
+            if already in gr:
+                gr.remove(already)
+        if i == cercle_data:
+            continue
         
+        color_group = []
         while True:
             if len(near) == 0:
                 color_group.append(i)
-                for k in group:
+                for k in gr:
                     x = (int(i["center_x"]) - int(k["center_x"])) ** 2
                     y = (int(i["center_y"]) - int(k["center_y"])) ** 2
                     if 0 < math.sqrt(x+y) <= 250:
@@ -103,11 +100,10 @@ def findNearPlaceTsumu(group):
                 if len(near) == 0:
                     break
             else:
-                print("else")
                 new_near = []
                 # near でforを回す
                 for j in near:
-                    for k in group:
+                    for k in gr:
                         # すでに比較済みのものは何もしない
                         if k == j:
                             break
@@ -117,6 +113,9 @@ def findNearPlaceTsumu(group):
                             # 新たなnearができる
                             new_near.append(k)
                             color_group.append(k)
+                            # color_groupをgrから消す
+                            if k in gr:
+                                gr.remove(k)
                 near = new_near
                 if len(new_near) == 0:
                     all_color_group.append(color_group)
@@ -191,11 +190,9 @@ def main():
         if len(sub) >= 3:
             group.append(sub)
     color_group = findNearPlaceTsumu(group[0])
-    print(color_group)
 
     index = 0
     for i in color_group:
-        print(len(i))
         for j in i:
             cv2.putText(color_img, str(index), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
         index += 1
