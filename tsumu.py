@@ -78,47 +78,49 @@ def findNearPlaceTsumu(group):
     # TODO all_color_groupに入っている物は比較の対象から外す様にする
 
     for i in group:
+        print("groupnannkai")
+        print(i)
         first = []
-        if len(near) == 0:
-            before_one = i
-            for j in i:
-                i.remove(j)
-                first = j
-                color_group.append(j)
-                for k in i:
-                    if j == k:
-                        break
-                    x = (int(j["center_x"]) - int(k["center_x"])) ** 2
-                    y = (int(j["center_y"]) - int(k["center_y"])) ** 2
+        # 比較に使用した物は削除する
+        for already in color_group:
+            # 比較に使用したものから比較しようとしたらcontinue
+            if i == already:
+                print("continue")
+                continue
+            if group in [already]:
+                group.remove(already)
+            
+        
+        while True:
+            if len(near) == 0:
+                color_group.append(i)
+                for k in group:
+                    x = (int(i["center_x"]) - int(k["center_x"])) ** 2
+                    y = (int(i["center_y"]) - int(k["center_y"])) ** 2
                     if 0 < math.sqrt(x+y) <= 250:
                         near.append(k)
                         color_group.append(k)
-                if len(near) != 0:
+                if len(near) == 0:
                     break
-        else:
-            new_near = []
-            # near でforを回す
-            for j in near:
-                # 消した配列をまた消そうとしないためのif分
-                if j not in history :
-                    before_one.remove(j)
-                    history.append(j)
-                for k in before_one:
-                    # すでに比較済みのものは何もしない
-                    if k == first or k == j:
-                        break
-
-                    x = (int(j["center_x"]) - int(k["center_x"])) ** 2
-                    y = (int(j["center_y"]) - int(k["center_y"])) ** 2
-                    if 0 < math.sqrt(x+y) <= 250:
-                        # 新たなnearができる
-                        new_near.append(k)
-                        color_group.append(k)
-            near = new_near
-            
-            if len(new_near) == 0:
-                all_color_group.append(color_group)
-            # TODO else が終わる度にgroupのforが進んでしまうため、全てを比較することが出来ていない
+            else:
+                print("else")
+                new_near = []
+                # near でforを回す
+                for j in near:
+                    for k in group:
+                        # すでに比較済みのものは何もしない
+                        if k == j:
+                            break
+                        x = (int(j["center_x"]) - int(k["center_x"])) ** 2
+                        y = (int(j["center_y"]) - int(k["center_y"])) ** 2
+                        if 0 < math.sqrt(x+y) <= 250:
+                            # 新たなnearができる
+                            new_near.append(k)
+                            color_group.append(k)
+                near = new_near
+                if len(new_near) == 0:
+                    all_color_group.append(color_group)
+                    break
     return all_color_group
 
 def main():
@@ -188,8 +190,8 @@ def main():
         
         if len(sub) >= 3:
             group.append(sub)
-
-    color_group = findNearPlaceTsumu(group)
+    color_group = findNearPlaceTsumu(group[0])
+    print(color_group)
 
     index = 0
     for i in color_group:
