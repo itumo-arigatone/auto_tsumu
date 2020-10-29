@@ -61,9 +61,65 @@ def averageColor(crop, ancestor):
     return color
 
 # ダブりを消す処理
-def get_unique_list(seq):
+def getUniqueList(seq):
     seen = []
     return [x for x in seq if x not in seen and not seen.append(x)]
+
+# 繋げられる距離のツムをグループ化する
+# param 色ごとにグループ化したdirectry
+def findNearPlaceTsumu(group):
+    # 色の中でも固まっているものでグループ化
+    color_group = []
+    all_color_group = []
+    near = []
+    before_one = []
+    history = []
+
+    # TODO all_color_groupに入っている物は比較の対象から外す様にする
+
+    for i in group:
+        first = []
+        if len(near) == 0:
+            before_one = i
+            for j in i:
+                i.remove(j)
+                first = j
+                color_group.append(j)
+                for k in i:
+                    if j == k:
+                        break
+                    x = (int(j["center_x"]) - int(k["center_x"])) ** 2
+                    y = (int(j["center_y"]) - int(k["center_y"])) ** 2
+                    if 0 < math.sqrt(x+y) <= 250:
+                        near.append(k)
+                        color_group.append(k)
+                if len(near) != 0:
+                    break
+        else:
+            new_near = []
+            # near でforを回す
+            for j in near:
+                # 消した配列をまた消そうとしないためのif分
+                if j not in history :
+                    before_one.remove(j)
+                    history.append(j)
+                for k in before_one:
+                    # すでに比較済みのものは何もしない
+                    if k == first or k == j:
+                        break
+
+                    x = (int(j["center_x"]) - int(k["center_x"])) ** 2
+                    y = (int(j["center_y"]) - int(k["center_y"])) ** 2
+                    if 0 < math.sqrt(x+y) <= 250:
+                        # 新たなnearができる
+                        new_near.append(k)
+                        color_group.append(k)
+            near = new_near
+            
+            if len(new_near) == 0:
+                all_color_group.append(color_group)
+            # TODO else が終わる度にgroupのforが進んでしまうため、全てを比較することが出来ていない
+    return all_color_group
 
 def main():
     # TODO 処理の最初でスクショを取得する
@@ -119,7 +175,7 @@ def main():
             }
         )
 
-    color_list = get_unique_list(all_list)
+    color_list = getUniqueList(all_list)
 
     # TODO center_list rename cercle_info
     # 色ごとにグループ化
@@ -133,58 +189,15 @@ def main():
         if len(sub) >= 3:
             group.append(sub)
 
-    # 色の中でも固まっているものでグループ化
-    color_group = []
-    near = []
-    before_one = []
-    history = []
-    for i in group:
-        first = []
-        index = 1
-        if len(near) == 0:
-            print("kokonann")
-            before_one = i
-            for j in i:
-                i.remove(j)
-                first = j
-                color_group.append(j)
-                cv2.putText(color_img, str(index), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
-                for k in i:
-                    if j == k:
-                        break
+    color_group = findNearPlaceTsumu(group)
 
-                    x = (int(j["center_x"]) - int(k["center_x"])) ** 2
-                    y = (int(j["center_y"]) - int(k["center_y"])) ** 2
-                    if 0 < math.sqrt(x+y) <= 250:
-                        near.append(k)
-                        color_group.append(k)
-                        # cv2.circle(color_img,(k["center_x"],k["center_y"]),2,(255,0,0),7)
-                        cv2.putText(color_img, str(index), (k["center_x"], k["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 5, cv2.LINE_AA)
-                        index += 1
-                if len(near) != 0:
-                    break
-        else:
-            new_near = []
-            # near でforを回す
-            for j in near:
-                # 消した配列をまた消そうとしないためのif分
-                if j not in history :
-                    before_one.remove(j)
-                    history.append(j)
-                for k in before_one:
-                    # すでに比較済みのものは何もしない
-                    if k == first or k == j:
-                        break
-
-                    x = (int(j["center_x"]) - int(k["center_x"])) ** 2
-                    y = (int(j["center_y"]) - int(k["center_y"])) ** 2
-                    if 0 < math.sqrt(x+y) <= 250:
-                        # 新たなnearができる
-                        new_near.append(k)
-                        color_group.append(k)
-                        cv2.putText(color_img, str(index), (k["center_x"], k["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (0, 255, 0), 5, cv2.LINE_AA)
-
-            near = new_near
+    index = 0
+    for i in color_group:
+        print(len(i))
+        for j in i:
+            cv2.putText(color_img, str(index), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
+        index += 1
+        
 
 
                     # 色が三個以上だったらappend
