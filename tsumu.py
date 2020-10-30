@@ -189,24 +189,21 @@ def main():
         
         if len(sub) >= 3:
             group.append(sub)
-    color_group = findNearPlaceTsumu(group[0])
+    color_group = []
+    for i in group:
+        color_group.append(findNearPlaceTsumu(i))
 
-    index = 0
+    # 繋げるツムの選択
+    most_length = 0
+    use_group = None
     for i in color_group:
-        for j in i:
-            cv2.putText(color_img, str(index), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
-        index += 1
-        
+        for k in i:
+            if len(k) > most_length:
+                most_length = len(k)
+                use_group = k
 
-
-                    # 色が三個以上だったらappend
-#                    cv2.line(
-#                        color_img,
-#                        (j["center_x"], j["center_y"]),
-#                        (k["center_x"], k["center_y"]),
-#                        (255, 0, 0),
-#                        5
-#                    )
+    for i in use_group:
+        cv2.circle(color_img,(i["center_x"],i["center_y"]),2,(0,255,255),9)
 
     # ここからPCのカーソルを操作する
     # TODO 中心点を繋ぐ処理　
