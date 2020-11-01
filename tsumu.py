@@ -158,7 +158,7 @@ def makeRoute(startNode, group, result):
 def main():
     # TODO 処理の最初でスクショを取得する
     # 取得したスクショをいじる
-    img_path = './img/tumu.jpg'
+    img_path = './img/tumu1.jpg'
     img = cv2.imread(img_path,0)
     color_img = cv2.imread(img_path)
     ancestor = cv2.imread(img_path)
@@ -242,7 +242,7 @@ def main():
             pyautogui.mouseDown(i["center_x"],i["center_y"], button='left')
             first = False
         index += 1
-        if index > len(array):
+        if index == len(array):
             # クリックを解除
             pyautogui.mouseUp(i["center_x"],i["center_y"], button='left')
 
