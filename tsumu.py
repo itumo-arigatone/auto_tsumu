@@ -3,16 +3,6 @@ import numpy as np
 import math
 import pyautogui
 
-def resize(img):
-    # resize window
-    screen_res = 1280, 720
-    scale_width = screen_res[0] / img.shape[1]
-    scale_height = screen_res[1] / img.shape[0]
-    scale = min(scale_width, scale_height)
-    window_width = int(img.shape[1] * scale)
-    window_height = int(img.shape[0] * scale)
-    return window_width, window_height
-
 # 中心周辺の色を平均可してツムを色にする
 def averageColor(crop, ancestor):
     # RGB平均値を出力
@@ -168,29 +158,15 @@ def makeRoute(startNode, group, result):
 def main():
     # TODO 処理の最初でスクショを取得する
     # 取得したスクショをいじる
-    img_path = './img/tumu1.jpg'
+    img_path = './img/tumu.jpg'
     img = cv2.imread(img_path,0)
     color_img = cv2.imread(img_path)
     ancestor = cv2.imread(img_path)
-    cimg = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
-
-    a = 4
-    image = cimg
-    lut = [ np.uint8(255.0 / (1 + math.exp(-a * (i - 128.) / 255.))) for i in range(256)] 
-    result_image = np.array( [ lut[value] for value in image.flat], dtype=np.uint8 )
-    cimg = result_image.reshape(image.shape)
     
     circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,100,param1=65,param2=28,minRadius=67,maxRadius=130)
     circles = np.uint16(np.around(circles))
     cercle_info = []
     for i in circles[0,:]:
-        # draw the outer circle 
-        # color version
-        # 円は色分けの範囲より大きめにする
-        circle_size = math.floor(i[2]*1.35)
-        cv2.circle(color_img,(i[0],i[1]),circle_size,(0,255,0),8)
-        # draw the center of the circle
-        cv2.circle(color_img,(i[0],i[1]),2,(0,0,255),7)
         # 中心周辺の色を取得する
         crop = ancestor[i[1]-30:i[1]+30, i[0]-30:i[0]+30]
         color = averageColor(crop, ancestor)
@@ -245,15 +221,12 @@ def main():
                 use_group = k
     # ルート検索,なぞる順に配列を作る
     array = findRoute(getUniqueList(use_group))
+
+    ############# Debug    
     index = 0
     for i in array:
         cv2.putText(color_img, str(index), (i["center_x"], i["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
         index += 1
-
-    ############# Debug    
-    size = resize(color_img)
-    cv2.namedWindow('color', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('color', size[0], size[1])
     cv2.imshow('color',color_img)
     ############# Debug END
 
