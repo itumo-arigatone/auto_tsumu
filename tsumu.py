@@ -181,7 +181,7 @@ def main():
     
     circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,100,param1=65,param2=28,minRadius=67,maxRadius=130)
     circles = np.uint16(np.around(circles))
-    center_list = []
+    cercle_info = []
     for i in circles[0,:]:
         # draw the outer circle 
         # color version
@@ -194,14 +194,14 @@ def main():
         crop = ancestor[i[1]-30:i[1]+30, i[0]-30:i[0]+30]
         color = averageColor(crop, ancestor)
 
-        center_list.append({
+        cercle_info.append({
             "color": color,
             "center_x": i[0],
             "center_y": i[1],
         })
 
     all_list = []
-    for k in center_list:
+    for k in cercle_info:
         cv2.circle(
             color_img,
             (k["center_x"], k["center_y"]),
@@ -220,12 +220,11 @@ def main():
 
     color_list = getUniqueList(all_list)
 
-    # TODO center_list rename cercle_info
     # 色ごとにグループ化
     group = []
     for i in color_list:
         sub = []
-        for j in center_list:
+        for j in cercle_info:
             if i["blue"] == j["color"]["blue"] and i["green"] == j["color"]["green"] and i["red"] == j["color"]["red"]:
                 sub.append(j)
         
