@@ -122,6 +122,47 @@ def findNearPlaceTsumu(group):
                     break
     return all_color_group
 
+# ルートを検索する処理
+# param 円の情報の配列
+def findRoute(group):
+    # 開始ノード取得
+    start = getStartNode(group)
+    # TODO 以下、再帰関数 つながるところからつながるところを見つける
+    # TODO つながるところを発見する
+    group.remove(start)
+    routeArray = makeRoute(start, group, [])
+        # TODO 開始ノードが[0]で,1,2,3,4
+    return routeArray
+
+def getStartNode(group):
+    for i in group:
+        node = 0
+        for j in group:
+            x = (int(i["center_x"]) - int(j["center_x"])) ** 2
+            y = (int(i["center_y"]) - int(j["center_y"])) ** 2
+            if 0 < math.sqrt(x+y) <= 250:
+                node += 1
+        if node == 1:
+            return i
+    return group[0]
+
+def makeRoute(startNode, group, result):
+    start = startNode
+    nextFlag = False
+    for i in group:
+        x = (int(start["center_x"]) - int(i["center_x"])) ** 2
+        y = (int(start["center_y"]) - int(i["center_y"])) ** 2
+        if 0 < math.sqrt(x+y) <= 250:
+            result.append(i)
+            start = i
+            group.remove(i)
+            nextFlag = True
+            break
+            # TODO breakを消して二つあったらつながる方を選ぶようにしたい
+    if not nextFlag:
+        return result
+    return makeRoute(start, group, result)
+
 def main():
     # TODO 処理の最初でスクショを取得する
     # 取得したスクショをいじる
@@ -204,6 +245,13 @@ def main():
 
     for i in use_group:
         cv2.circle(color_img,(i["center_x"],i["center_y"]),2,(0,255,255),9)
+
+    # TODO ルート検索,なぞる順に配列を作る
+    array = findRoute(use_group)
+    index = 0
+    for i in array:
+        cv2.putText(color_img, str(index), (i["center_x"], i["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
+        index += 1
 
     # ここからPCのカーソルを操作する
     # TODO 中心点を繋ぐ処理　
