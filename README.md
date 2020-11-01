@@ -13,3 +13,9 @@ https://www.python.org/downloads/windows/
 pip install opencv-python
 ```
 
+## install PyAutoGui
+1. Open cmd
+2. Execute below command ↓
+```sh
+pip install pyautogui
+```

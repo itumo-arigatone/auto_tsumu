@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+import pyautogui
 
 def resize(img):
     # resize window
@@ -249,15 +250,28 @@ def main():
         cv2.putText(color_img, str(index), (i["center_x"], i["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
         index += 1
 
-    # ここからPCのカーソルを操作する
-    # TODO 中心点を繋ぐ処理　
-
     ############# Debug    
     size = resize(color_img)
     cv2.namedWindow('color', cv2.WINDOW_NORMAL)
     cv2.resizeWindow('color', size[0], size[1])
     cv2.imshow('color',color_img)
     ############# Debug END
+
+    # ここからPCのカーソルを操作する
+    # 中心点を繋ぐ処理
+    first = True
+    index = 0
+    for i in array:
+        # 移動
+        pyautogui.moveTo(i["center_x"], i["center_y"], duration=1)
+        if first:
+            # スタート地点からクリックする
+            pyautogui.mouseDown(i["center_x"],i["center_y"], button='left')
+            first = False
+        index += 1
+        if index > len(array):
+            # クリックを解除
+            pyautogui.mouseUp(i["center_x"],i["center_y"], button='left')
 
     # end process
     cv2.waitKey(0)
