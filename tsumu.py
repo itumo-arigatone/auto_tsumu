@@ -130,7 +130,7 @@ def findRoute(group):
     # TODO 以下、再帰関数 つながるところからつながるところを見つける
     # TODO つながるところを発見する
     group.remove(start)
-    routeArray = makeRoute(start, group, [])
+    routeArray = makeRoute(start, group, [start])
         # TODO 開始ノードが[0]で,1,2,3,4
     return routeArray
 
@@ -149,24 +149,25 @@ def getStartNode(group):
 def makeRoute(startNode, group, result):
     start = startNode
     nextFlag = False
-    for i in group:
+    gr = group
+    for i in gr:
         x = (int(start["center_x"]) - int(i["center_x"])) ** 2
         y = (int(start["center_y"]) - int(i["center_y"])) ** 2
         if 0 < math.sqrt(x+y) <= 250:
             result.append(i)
             start = i
-            group.remove(i)
+            gr.remove(i)
             nextFlag = True
             break
             # TODO breakを消して二つあったらつながる方を選ぶようにしたい
     if not nextFlag:
         return result
-    return makeRoute(start, group, result)
+    return makeRoute(start, gr, result)
 
 def main():
     # TODO 処理の最初でスクショを取得する
     # 取得したスクショをいじる
-    img_path = './img/tumu.jpg'
+    img_path = './img/tumu1.jpg'
     img = cv2.imread(img_path,0)
     color_img = cv2.imread(img_path)
     ancestor = cv2.imread(img_path)
@@ -242,12 +243,8 @@ def main():
             if len(k) > most_length:
                 most_length = len(k)
                 use_group = k
-
-    for i in use_group:
-        cv2.circle(color_img,(i["center_x"],i["center_y"]),2,(0,255,255),9)
-
-    # TODO ルート検索,なぞる順に配列を作る
-    array = findRoute(use_group)
+    # ルート検索,なぞる順に配列を作る
+    array = findRoute(getUniqueList(use_group))
     index = 0
     for i in array:
         cv2.putText(color_img, str(index), (i["center_x"], i["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
