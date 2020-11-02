@@ -5,6 +5,8 @@ import pyautogui
 from pywinauto import application
 
 img_path = "./img/window.png"
+# windowの左上角の座標を取得する
+window_position = pyautogui.position()
 
 def capture():
     app = application.Application().connect(title_re="Vysor", visible_only="True")
@@ -162,9 +164,32 @@ def makeRoute(startNode, group, result):
         return result
     return makeRoute(start, gr, result)
 
+def tapFan():
+    pyautogui.mouseDown(window_position[0] + 612, window_position[1] + 1316, button='left')
+    pyautogui.mouseUp(window_position[0] + 612, window_position[1] + 1316, button='left')
+
+def connectTsumu(array):
+    # ここからPCのカーソルを操作する
+    # 中心点を繋ぐ処理
+    first = True
+    index = 0
+    for i in array:
+        # 移動
+        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), duration=1)
+        if first:
+            print("down")
+            # スタート地点からクリックする
+            pyautogui.mouseDown(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
+            first = False
+        index += 1
+        if index == len(array):
+            # クリックを解除
+            pyautogui.mouseUp(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
+
+
 def main():
     # 処理の最初でスクショを取得する
-    # capture()
+    capture()
     # 取得したスクショをいじる
     img = cv2.imread(img_path,0)
     color_img = cv2.imread(img_path)
@@ -180,7 +205,7 @@ def main():
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-        crop = ancestor[i[1]-15:i[1]+15, i[0]-15:i[0]+15]
+        crop = ancestor[i[1]-38:i[1]+38, i[0]-38:i[0]+38]
         color = averageColor(crop, ancestor)
 
         cercle_info.append({
@@ -233,6 +258,11 @@ def main():
                 use_group = k
     # ルート検索,なぞる順に配列を作る
     array = findRoute(getUniqueList(use_group))
+    if len(array) < 3:
+        tapFan()
+        return
+
+    connectTsumu(array)
 
     ############# Debug    
     index = 0
@@ -242,22 +272,6 @@ def main():
     cv2.imshow('color',color_img)
     # cv2.imshow('color',cimg)
     ############# Debug END
-
-    # ここからPCのカーソルを操作する
-    # 中心点を繋ぐ処理
-    first = True
-    index = 0
-    for i in array:
-        # 移動
-        pyautogui.moveTo(i["center_x"], i["center_y"], duration=0.1)
-        if first:
-            # スタート地点からクリックする
-            pyautogui.mouseDown(i["center_x"],i["center_y"], button='left')
-            first = False
-        index += 1
-        if index == len(array):
-            # クリックを解除
-            pyautogui.mouseUp(i["center_x"],i["center_y"], button='left')
 
     # end process
     cv2.waitKey(0)
