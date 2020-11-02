@@ -175,9 +175,8 @@ def connectTsumu(array):
     index = 0
     for i in array:
         # 移動
-        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), duration=1)
+        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), duration=0.1)
         if first:
-            print("down")
             # スタート地点からクリックする
             pyautogui.mouseDown(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
             first = False
@@ -188,90 +187,80 @@ def connectTsumu(array):
 
 
 def main():
-    # 処理の最初でスクショを取得する
-    capture()
-    # 取得したスクショをいじる
-    img = cv2.imread(img_path,0)
-    color_img = cv2.imread(img_path)
-    ancestor = cv2.imread(img_path)
-    cimg = cv2.imread(img_path)
-    
-    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,80,param1=60,param2=15,minRadius=35,maxRadius=45)
-    circles = np.uint16(np.around(circles))
-    for i in circles[0,:]:
-        cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
-        cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+    try:
+        while True:
+            # 処理の最初でスクショを取得する
+            capture()
+            # 取得したスクショをいじる
+            img = cv2.imread(img_path,0)
+            color_img = cv2.imread(img_path)
+            ancestor = cv2.imread(img_path)
+            
+            circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,80,param1=60,param2=15,minRadius=35,maxRadius=45)
+            circles = np.uint16(np.around(circles))
 
-    cercle_info = []
-    for i in circles[0,:]:
-        # 中心周辺の色を取得する
-        crop = ancestor[i[1]-38:i[1]+38, i[0]-38:i[0]+38]
-        color = averageColor(crop, ancestor)
+            cercle_info = []
+            for i in circles[0,:]:
+                # 中心周辺の色を取得する
+                crop = ancestor[i[1]-38:i[1]+38, i[0]-38:i[0]+38]
+                color = averageColor(crop, ancestor)
 
-        cercle_info.append({
-            "color": color,
-            "center_x": i[0],
-            "center_y": i[1],
-        })
+                cercle_info.append({
+                    "color": color,
+                    "center_x": i[0],
+                    "center_y": i[1],
+                })
 
-    all_list = []
-    for k in cercle_info:
-        cv2.circle(
-            color_img,
-            (k["center_x"], k["center_y"]),
-            50,
-            (k["color"]["blue"], k["color"]["green"], k["color"]["red"]),
-            -1
-        )
-        # 色の種類
-        all_list.append(
-            {
-            "blue": k["color"]["blue"],
-            "green": k["color"]["green"],
-            "red": k["color"]["red"]
-            }
-        )
+            all_list = []
+            for k in cercle_info:
+                cv2.circle(
+                    color_img,
+                    (k["center_x"], k["center_y"]),
+                    50,
+                    (k["color"]["blue"], k["color"]["green"], k["color"]["red"]),
+                    -1
+                )
+                # 色の種類
+                all_list.append(
+                    {
+                    "blue": k["color"]["blue"],
+                    "green": k["color"]["green"],
+                    "red": k["color"]["red"]
+                    }
+                )
 
-    color_list = getUniqueList(all_list)
+            color_list = getUniqueList(all_list)
 
-    # 色ごとにグループ化
-    group = []
-    for i in color_list:
-        sub = []
-        for j in cercle_info:
-            if i["blue"] == j["color"]["blue"] and i["green"] == j["color"]["green"] and i["red"] == j["color"]["red"]:
-                sub.append(j)
-        
-        if len(sub) >= 3:
-            group.append(sub)
-    color_group = []
-    for i in group:
-        color_group.append(findNearPlaceTsumu(i))
+            # 色ごとにグループ化
+            group = []
+            for i in color_list:
+                sub = []
+                for j in cercle_info:
+                    if i["blue"] == j["color"]["blue"] and i["green"] == j["color"]["green"] and i["red"] == j["color"]["red"]:
+                        sub.append(j)
+                
+                if len(sub) >= 3:
+                    group.append(sub)
+            color_group = []
+            for i in group:
+                color_group.append(findNearPlaceTsumu(i))
 
-    # 繋げるツムの選択
-    most_length = 0
-    use_group = None
-    for i in color_group:
-        for k in i:
-            if len(k) > most_length:
-                most_length = len(k)
-                use_group = k
-    # ルート検索,なぞる順に配列を作る
-    array = findRoute(getUniqueList(use_group))
-    if len(array) < 3:
-        tapFan()
-        return
+            # 繋げるツムの選択
+            most_length = 0
+            use_group = None
+            for i in color_group:
+                for k in i:
+                    if len(k) > most_length:
+                        most_length = len(k)
+                        use_group = k
+            # ルート検索,なぞる順に配列を作る
+            array = findRoute(getUniqueList(use_group))
+            if len(array) < 3:
+                tapFan()
 
-    connectTsumu(array)
-
-    ############# Debug    
-    index = 0
-    for i in array:
-        cv2.putText(color_img, str(index), (i["center_x"], i["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
-        index += 1
-    cv2.imshow('color',color_img)
-    # cv2.imshow('color',cimg)
-    ############# Debug END
+            connectTsumu(array)
+    except KeyboardInterrupt:
+        print('!!FINISH!!')
 
     # end process
     cv2.waitKey(0)
