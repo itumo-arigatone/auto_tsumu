@@ -2,6 +2,13 @@ import cv2
 import numpy as np
 import math
 import pyautogui
+from pywinauto import application
+
+img_path = "./img/window.png"
+
+def capture():
+    app = application.Application().connect(title_re="Vysor", visible_only="True")
+    app[u'SCV42'].CaptureAsImage().save(img_path)
 
 # 中心周辺の色を平均可してツムを色にする
 def averageColor(crop, ancestor):
@@ -85,7 +92,7 @@ def findNearPlaceTsumu(group):
                 for k in gr:
                     x = (int(i["center_x"]) - int(k["center_x"])) ** 2
                     y = (int(i["center_y"]) - int(k["center_y"])) ** 2
-                    if 0 < math.sqrt(x+y) <= 250:
+                    if 0 < math.sqrt(x+y) <= 130:
                         near.append(k)
                         color_group.append(k)
                 if len(near) == 0:
@@ -100,7 +107,7 @@ def findNearPlaceTsumu(group):
                             break
                         x = (int(j["center_x"]) - int(k["center_x"])) ** 2
                         y = (int(j["center_y"]) - int(k["center_y"])) ** 2
-                        if 0 < math.sqrt(x+y) <= 250:
+                        if 0 < math.sqrt(x+y) <= 130:
                             # 新たなnearができる
                             new_near.append(k)
                             color_group.append(k)
@@ -131,7 +138,7 @@ def getStartNode(group):
         for j in group:
             x = (int(i["center_x"]) - int(j["center_x"])) ** 2
             y = (int(i["center_y"]) - int(j["center_y"])) ** 2
-            if 0 < math.sqrt(x+y) <= 250:
+            if 0 < math.sqrt(x+y) <= 130:
                 node += 1
         if node == 1:
             return i
@@ -144,7 +151,7 @@ def makeRoute(startNode, group, result):
     for i in gr:
         x = (int(start["center_x"]) - int(i["center_x"])) ** 2
         y = (int(start["center_y"]) - int(i["center_y"])) ** 2
-        if 0 < math.sqrt(x+y) <= 250:
+        if 0 < math.sqrt(x+y) <= 130:
             result.append(i)
             start = i
             gr.remove(i)
@@ -156,19 +163,24 @@ def makeRoute(startNode, group, result):
     return makeRoute(start, gr, result)
 
 def main():
-    # TODO 処理の最初でスクショを取得する
+    # 処理の最初でスクショを取得する
+    # capture()
     # 取得したスクショをいじる
-    img_path = './img/tumu1.jpg'
     img = cv2.imread(img_path,0)
     color_img = cv2.imread(img_path)
     ancestor = cv2.imread(img_path)
+    cimg = cv2.imread(img_path)
     
-    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,100,param1=65,param2=28,minRadius=67,maxRadius=130)
+    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,80,param1=60,param2=15,minRadius=35,maxRadius=45)
     circles = np.uint16(np.around(circles))
+    for i in circles[0,:]:
+        cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+        cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-        crop = ancestor[i[1]-30:i[1]+30, i[0]-30:i[0]+30]
+        crop = ancestor[i[1]-15:i[1]+15, i[0]-15:i[0]+15]
         color = averageColor(crop, ancestor)
 
         cercle_info.append({
@@ -182,7 +194,7 @@ def main():
         cv2.circle(
             color_img,
             (k["center_x"], k["center_y"]),
-            100,
+            50,
             (k["color"]["blue"], k["color"]["green"], k["color"]["red"]),
             -1
         )
@@ -228,6 +240,7 @@ def main():
         cv2.putText(color_img, str(index), (i["center_x"], i["center_y"]), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 255), 5, cv2.LINE_AA)
         index += 1
     cv2.imshow('color',color_img)
+    # cv2.imshow('color',cimg)
     ############# Debug END
 
     # ここからPCのカーソルを操作する
@@ -236,7 +249,7 @@ def main():
     index = 0
     for i in array:
         # 移動
-        pyautogui.moveTo(i["center_x"], i["center_y"], duration=1)
+        pyautogui.moveTo(i["center_x"], i["center_y"], duration=0.1)
         if first:
             # スタート地点からクリックする
             pyautogui.mouseDown(i["center_x"],i["center_y"], button='left')
