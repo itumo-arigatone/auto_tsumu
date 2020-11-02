@@ -257,6 +257,7 @@ def main():
             array = findRoute(getUniqueList(use_group))
             if len(array) < 3:
                 tapFan()
+                continue
 
             connectTsumu(array)
     except KeyboardInterrupt:
