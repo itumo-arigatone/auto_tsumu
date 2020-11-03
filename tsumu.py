@@ -2,15 +2,25 @@ import cv2
 import numpy as np
 import math
 import pyautogui
+import sys
 from pywinauto import application
 
 img_path = "./img/window.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
+args = sys.argv
 
 def capture():
     app = application.Application().connect(title_re="Vysor", visible_only="True")
-    app[u'SCV42'].CaptureAsImage().save(img_path)
+    app[args[1]].CaptureAsImage().save(img_path)
+
+def gamma_correction(img, gamma):
+    # テーブルを作成する。
+    table = (np.arange(256) / 255) ** gamma * 255
+    # [0, 255] でクリップし、uint8 型にする。
+    table = np.clip(table, 0, 255).astype(np.uint8)
+
+    return cv2.LUT(img, table)
 
 # 中心周辺の色を平均可してツムを色にする
 def averageColor(crop, ancestor):
@@ -26,32 +36,26 @@ def averageColor(crop, ancestor):
         r = 255
     
     # ダサすぎる
-    if b <= 64:
-        b = 25
-    elif 64 < b <= 128:
-        b = 75
-    elif 128 < b <=192:
-        b = 125
-    elif 192 < b <=255:
-        b = 170
+    if b <= 85:
+        b = 40
+    elif 85 < b <= 170:
+        b = 120
+    elif 170 < b <=255:
+        b = 210
     
-    if g <= 64:
-        g = 25
-    elif 64 < g <= 128:
-        g = 75
-    elif 128 < g <=192:
-        g = 125
-    elif 192 < g <=255:
-        g = 170
+    if g <= 85:
+        g = 40
+    elif 85 < g <= 170:
+        g = 120
+    elif 170 < g <=255:
+        g = 210
 
-    if r <= 64:
-        r = 32
-    elif 64 < r <= 128:
-        r = 96
-    elif 128 < r <=192:
-        r = 160
-    elif 192 < r <=255:
-        r = 224
+    if r <= 85:
+        r = 40
+    elif 85 < r <= 170:
+        r = 120
+    elif 170 < r <=255:
+        r = 210
 
     color = {
         "blue": b,
@@ -165,8 +169,8 @@ def makeRoute(startNode, group, result):
     return makeRoute(start, gr, result)
 
 def tapFan():
-    pyautogui.mouseDown(window_position[0] + 612, window_position[1] + 1316, button='left')
-    pyautogui.mouseUp(window_position[0] + 612, window_position[1] + 1316, button='left')
+    pyautogui.mouseDown(window_position[0] + 612, window_position[1] + 1316 + 450, button='left')
+    pyautogui.mouseUp(window_position[0] + 612, window_position[1] + 1316 +450, button='left')
 
 def connectTsumu(array):
     # ここからPCのカーソルを操作する
@@ -175,15 +179,15 @@ def connectTsumu(array):
     index = 0
     for i in array:
         # 移動
-        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), duration=0.1)
+        pyautogui.moveTo(window_position[0] + int(i["center_x"]), 450 + window_position[1] + int(i["center_y"]), duration=0.01)
         if first:
             # スタート地点からクリックする
-            pyautogui.mouseDown(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
+            pyautogui.mouseDown(window_position[0] + int(i["center_x"]), 450 + window_position[1] + int(i["center_y"]), button='left')
             first = False
         index += 1
         if index == len(array):
             # クリックを解除
-            pyautogui.mouseUp(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
+            pyautogui.mouseUp(window_position[0] + int(i["center_x"]), 450 + window_position[1] + int(i["center_y"]), button='left')
 
 
 def main():
@@ -195,6 +199,17 @@ def main():
             img = cv2.imread(img_path,0)
             color_img = cv2.imread(img_path)
             ancestor = cv2.imread(img_path)
+
+            # コントラスト、明るさを変更する。
+            constract = gamma_correction(ancestor, gamma=2.5)
+            
+            # トリミング
+            x, y = 0, 450
+            h, w = 645, 720
+            ancestor = constract[y:y+h, x:x+w]
+            color_img = color_img[y:y+h, x:x+w]
+            img = img[y:y+h, x:x+w]
+
             
             circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,80,param1=60,param2=15,minRadius=35,maxRadius=45)
             circles = np.uint16(np.around(circles))
@@ -202,7 +217,7 @@ def main():
             cercle_info = []
             for i in circles[0,:]:
                 # 中心周辺の色を取得する
-                crop = ancestor[i[1]-38:i[1]+38, i[0]-38:i[0]+38]
+                crop = ancestor[i[1]-10:i[1]+10, i[0]-10:i[0]+10]
                 color = averageColor(crop, ancestor)
 
                 cercle_info.append({
