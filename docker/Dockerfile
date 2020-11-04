@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.8
 USER root
 
 RUN apt-get update
@@ -18,5 +18,4 @@ RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 RUN pip install opencv-python
 RUN pip install pyautogui
-RUN pip install pywinauto
 RUN pip install numpy
