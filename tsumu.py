@@ -169,8 +169,8 @@ def makeRoute(startNode, group, result):
     return makeRoute(start, gr, result)
 
 def tapFan():
-    pyautogui.mouseDown(window_position[0] + 612, window_position[1] + 1316 + 450, button='left')
-    pyautogui.mouseUp(window_position[0] + 612, window_position[1] + 1316 +450, button='left')
+    pyautogui.mouseDown(window_position[0] + 677, window_position[1] + 1450, button='left')
+    pyautogui.mouseUp(window_position[0] + 677, window_position[1] + 1450, button='left')
 
 def connectTsumu(array):
     # ここからPCのカーソルを操作する
@@ -205,13 +205,13 @@ def main():
             
             # トリミング
             x, y = 0, 450
-            h, w = 645, 720
+            h, w = 950, 920
             ancestor = constract[y:y+h, x:x+w]
             color_img = color_img[y:y+h, x:x+w]
             img = img[y:y+h, x:x+w]
 
             
-            circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,80,param1=60,param2=15,minRadius=35,maxRadius=45)
+            circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,80,param1=50,param2=20,minRadius=35,maxRadius=60)
             circles = np.uint16(np.around(circles))
 
             cercle_info = []
@@ -273,7 +273,6 @@ def main():
             if len(array) < 3:
                 tapFan()
                 continue
-
             connectTsumu(array)
     except KeyboardInterrupt:
         print('!!FINISH!!')
