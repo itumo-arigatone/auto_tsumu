@@ -12,7 +12,7 @@ window_position = [int(args[2]), int(args[3])]
 
 def capture():
     app = application.Application().connect(title_re="Vysor", visible_only="True")
-    app[args[1]].CaptureAsImage().save(img_path)
+    app[args[1]].capture_as_image().save(img_path)
 
 def gamma_correction(img, gamma):
     # テーブルを作成する。

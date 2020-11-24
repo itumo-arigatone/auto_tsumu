@@ -60,7 +60,7 @@ class StartButton extends React.Component {
     ipcRenderer.sendSync('push-start', 'data');
     // python を呼び出す
     const command =
-      'python ./src/python/tsumu.py SCV42 ' + window.x + ' ' + window.y;
+      'python ./src/python/tsumu.py SCV42 ' + window.x * 2 + ' ' + window.y * 2;
     ChildProcess.exec(command, (error, stdout, stderr) => {
       if (error != null) {
         console.log(error);

@@ -5,7 +5,7 @@ import pyautogui
 import sys
 from pywinauto import application
 
-img_path = "./img/window.png"
+img_path = "./img/sample.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
 
