@@ -4,11 +4,21 @@ import math
 import pyautogui
 import sys
 from pywinauto import application
+import logging
 
 img_path = "./img/window.png"
 args = sys.argv
 # windowの左上角の座標を取得する
 window_position = [int(args[2]), int(args[3])]
+
+# ログレベルを DEBUG に変更
+logging.basicConfig(filename='./dist/logger.log', level=logging.DEBUG)
+# logging のみの書き方
+# logging.info('info %s %s', 'test', 'test')
+logging.info('info %s', args[1])
+logging.info('info %s', args[2])
+logging.info('info %s', args[3])
+
 
 def capture():
     app = application.Application().connect(title_re="Vysor", visible_only="True")
@@ -202,7 +212,9 @@ def main():
     try:
         while True:
             # 処理の最初でスクショを取得する
+            logging.info('info %s', 'sukusyo')
             capture()
+            logging.info('info %s', 'sukusyo owari')
             # 取得したスクショをいじる
             img = cv2.imread(img_path,0)
             color_img = cv2.imread(img_path)
