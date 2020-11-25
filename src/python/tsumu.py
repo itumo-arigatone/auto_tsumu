@@ -57,6 +57,14 @@ def averageColor(crop, ancestor):
     elif 170 < r <=255:
         r = 210
 
+    if r == 210 or g == 210 or b == 210:
+        if r < 210:
+            r = 0
+        if g < 210:
+            g = 0
+        if b < 210:
+            b = 0
+
     color = {
         "blue": b,
         "green": g,

@@ -4,8 +4,6 @@ import ChildProcess from 'child_process';
 import fs from 'fs';
 import { ipcRenderer } from 'electron';
 
-// const container = document.getElementById('contents');
-// ReactDOM.render(<p>こんにちは、世界</p>, container);
 /* eslint-disable no-invalid-this */
 /**
  * スタートボタン情報クラス
@@ -63,9 +61,16 @@ class StartButton extends React.Component {
       'python ./src/python/tsumu.py SCV42 ' + window.x * 2 + ' ' + window.y * 2;
     ChildProcess.exec(command, (error, stdout, stderr) => {
       if (error != null) {
+        ipcRenderer.sendSync('pyEnd', error + '');
+        // TODO 画面に書き込む処理
+        <Logging msg={error + ''} />;
         console.log(error);
+        console.log('error');
       } else {
+        ipcRenderer.sendSync('pyEnd', 'data');
+        <Logging msg={stdout + ''} />;
         console.log(stdout);
+        console.log('stdout');
       }
     });
   };
@@ -88,4 +93,19 @@ class StartButton extends React.Component {
   }
 }
 
+/**
+ * スタートボタン情報クラス
+ * @return {void}
+ */
+class Logging extends React.Component<{ msg: string }> {
+  /**
+   * レンダー
+   * @return {any} button tag
+   */
+  render() {
+    return this.props.msg;
+  }
+}
+
 ReactDOM.render(<StartButton />, document.getElementById('startButton'));
+ReactDOM.render(<Logging msg={'aa'} />, document.getElementById('messageArea'));
