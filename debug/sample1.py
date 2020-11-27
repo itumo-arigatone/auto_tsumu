@@ -3,9 +3,8 @@ import numpy as np
 import math
 import pyautogui
 import sys
-from pywinauto import application
 
-img_path = "./img/sample.png"
+img_path = "../img/sample.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
 
@@ -43,6 +42,14 @@ def averageColor(crop, ancestor):
         r = 120
     elif 170 < r <=255:
         r = 210
+
+    if r == 210 or g == 210 or b == 210:
+        if r < 210:
+            r = 0
+        if g < 210:
+            g = 0
+        if b < 210:
+            b = 0
 
     color = {
         "blue": b,
@@ -184,10 +191,6 @@ def gamma_correction(img, gamma):
 
     return cv2.LUT(img, table)
 
-
-# 画像を読み込む。
-src = cv2.imread("sample.jpg")
-
 def main():
     # 処理の最初でスクショを取得する
     # capture()
@@ -201,7 +204,7 @@ def main():
 
     # トリミング
     x, y = 0, 450
-    h, w = 645, 720
+    h, w = 800, 720
     ancestor = constract[y:y+h, x:x+w]
     color_img = color_img[y:y+h, x:x+w]
     img = img[y:y+h, x:x+w]
@@ -266,8 +269,8 @@ def main():
 
     ############# Debug
     cv2.imshow('color', color_img)
-    cv2.imshow('sss', ancestor)
-    # cv2.imshow('color',cimg)
+    # cv2.imshow('sss', ancestor)
+    cv2.imshow('vanila',ancestor)
     ############# Debug END
 
     # end process
