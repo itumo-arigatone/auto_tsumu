@@ -55,19 +55,22 @@ class StartButton extends React.Component {
       y: position.y + screen[1],
     };
     // ウィンドウ操作
-    ipcRenderer.sendSync('push-start', 'data');
+    const data = ipcRenderer.invoke('push-start', 'data');
+    if (data == null) {
+      console.log('error');
+    }
     // python を呼び出す
     const command =
       'python ./src/python/tsumu.py SCV42 ' + window.x * 2 + ' ' + window.y * 2;
     ChildProcess.exec(command, (error, stdout, stderr) => {
       if (error != null) {
-        ipcRenderer.sendSync('pyEnd', error + '');
+        ipcRenderer.invoke('pyEnd', error + '');
         // TODO 画面に書き込む処理
         <Logging msg={error + ''} />;
         console.log(error);
         console.log('error');
       } else {
-        ipcRenderer.sendSync('pyEnd', 'data');
+        ipcRenderer.invoke('pyEnd', 'data');
         <Logging msg={stdout + ''} />;
         console.log(stdout);
         console.log('stdout');

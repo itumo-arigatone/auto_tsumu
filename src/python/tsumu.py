@@ -187,8 +187,8 @@ def makeRoute(startNode, group, result):
     return makeRoute(start, gr, result)
 
 def tapFan():
-    pyautogui.mouseDown(window_position[0] + 677, window_position[1] + 1450, button='left')
-    pyautogui.mouseUp(window_position[0] + 677, window_position[1] + 1450, button='left')
+    pyautogui.mouseDown(window_position[0] + 677, window_position[1] + 1250, button='left')
+    pyautogui.mouseUp(window_position[0] + 677, window_position[1] + 1250, button='left')
 
 def connectTsumu(array):
     # ここからPCのカーソルを操作する
@@ -209,6 +209,7 @@ def connectTsumu(array):
 
 
 def main():
+    logging.info('info %s', 'mainstart')
     try:
         while True:
             # 処理の最初でスクショを取得する
@@ -225,7 +226,7 @@ def main():
             
             # トリミング
             x, y = 0, 450
-            h, w = 950, 920
+            h, w = 800, 720
             ancestor = constract[y:y+h, x:x+w]
             color_img = color_img[y:y+h, x:x+w]
             img = img[y:y+h, x:x+w]
@@ -300,6 +301,8 @@ def main():
     # end process
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+logging.info('info %s', 'if mae')
 
 if __name__ == "__main__":
     main()

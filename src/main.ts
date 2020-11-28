@@ -51,11 +51,20 @@ app.on('activate', () => {
   }
 });
 
-ipcMain.on('push-start', () => {
+ipcMain.handle('push-start', (event, message) => {
+  console.log('push start');
   win.setIgnoreMouseEvents(true);
+  console.log('ignoreMOusetrue');
+  return 'ok';
 })
 
-ipcMain.on('pyEnd', (error) => {
+ipcMain.handle('pyEnd', (event, error) => {
   console.log(error);
   win.setIgnoreMouseEvents(false);
+  return;
+})
+
+ipcMain.handle('logger', (event, str) => {
+  console.log(str);
+  return;
 })

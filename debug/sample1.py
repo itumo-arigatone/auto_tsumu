@@ -4,7 +4,7 @@ import math
 import pyautogui
 import sys
 
-img_path = "../img/sample.png"
+img_path = "./img/sample.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
 
@@ -24,23 +24,23 @@ def averageColor(crop, ancestor):
     # ダサすぎる
     if b <= 85:
         b = 40
-    elif 85 < b <= 170:
+    elif 85 < b <= 180:
         b = 120
-    elif 170 < b <=255:
+    elif 180 < b <=255:
         b = 210
     
     if g <= 85:
         g = 40
-    elif 85 < g <= 170:
+    elif 85 < g <= 180:
         g = 120
-    elif 170 < g <=255:
+    elif 180 < g <=255:
         g = 210
 
     if r <= 85:
         r = 40
-    elif 85 < r <= 170:
+    elif 85 < r <= 180:
         r = 120
-    elif 170 < r <=255:
+    elif 180 < r <=255:
         r = 210
 
     if r == 210 or g == 210 or b == 210:
@@ -215,7 +215,7 @@ def main():
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-        crop = ancestor[i[1]-10:i[1]+10, i[0]-10:i[0]+10]
+        crop = ancestor[i[1]-9:i[1]+9, i[0]-9:i[0]+9]
         color = averageColor(crop, ancestor)
 
         cercle_info.append({
