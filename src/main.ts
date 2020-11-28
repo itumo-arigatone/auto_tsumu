@@ -52,9 +52,7 @@ app.on('activate', () => {
 });
 
 ipcMain.handle('push-start', (event, message) => {
-  console.log('push start');
   win.setIgnoreMouseEvents(true);
-  console.log('ignoreMOusetrue');
   return 'ok';
 })
 
