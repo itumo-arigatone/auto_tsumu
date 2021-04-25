@@ -8,21 +8,6 @@ img_path = "../img/sample.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
 
-# 中心周辺の色を平均可してツムを色にする
-def averageColor(crop, ancestor):
-    # RGB平均値を出力
-    # flattenで一次元化しmeanで平均を取得 
-    b = crop.T[0].flatten().mean()
-    g = crop.T[1].flatten().mean()
-    r = crop.T[2].flatten().mean()
-
-    color = {
-        "blue": b,
-        "green": g,
-        "red":r
-    }
-    return color
-
 # ダブりを消す処理
 def getUniqueList(seq):
     seen = []
@@ -162,9 +147,42 @@ def hsv_decision(rgb):
 
     # HSV平均値を取得
     # flattenで一次元化しmeanで平均を取得 
-    h = imgBoxHsv.T[0].flatten().mean()
-    s = imgBoxHsv.T[1].flatten().mean()
-    v = imgBoxHsv.T[2].flatten().mean()
+    h = round(imgBoxHsv.T[0].flatten().mean(), -1)
+    s = round(imgBoxHsv.T[1].flatten().mean(), -1)
+    v = round(imgBoxHsv.T[2].flatten().mean(), -1)
+    # ダサすぎる
+    if h <= 36:
+        h = 0
+    elif 36 < h <= 72:
+        h = 37
+    elif 72 < h <= 108:
+        h = 73
+    elif 108 < h <= 144:
+        h = 109
+    elif 144 < h <= 180:
+        h = 145
+    
+    if s <= 51:
+        s = 0
+    elif 51 < s <= 102:
+        s = 52
+    elif 102 < s <= 153:
+        s = 103
+    elif 153 < s <= 204:
+        s = 154
+    elif 204 < s <= 255:
+        s = 205
+
+    if v <= 51:
+        v = 0
+    elif 51 < v <= 102:
+        v = 52
+    elif 102 < v <= 153:
+        v = 103
+    elif 153 < v <= 204:
+        v = 154
+    elif 204 < v <= 255:
+        v = 205
 
     # HSV平均値を出力
     print("Hue: %.2f" % (h))
@@ -185,7 +203,7 @@ def main():
     ancestor = cv2.imread(img_path)
 
     # コントラスト、明るさを変更する。
-    ancestor = gamma_correction(ancestor, gamma=2.5)
+    ancestor = gamma_correction(ancestor, gamma=1.8)
 
     # トリミング
     # x, y = 0, 450
@@ -199,8 +217,7 @@ def main():
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-        crop = ancestor[i[1]-9:i[1]+9, i[0]-9:i[0]+9]
-        #color = averageColor(crop, ancestor)
+        crop = ancestor[i[1]-6:i[1]+6, i[0]-6:i[0]+6]
 
         hsv_color = hsv_decision(crop)
 
@@ -240,6 +257,7 @@ def main():
         
         if len(sub) >= 3:
             group.append(sub)
+            print("create group")
     color_group = []
     for i in group:
         color_group.append(findNearPlaceTsumu(i))
@@ -252,6 +270,18 @@ def main():
             if len(k) > most_length:
                 most_length = len(k)
                 use_group = k
+    
+    if use_group != None:
+        # ルート検索,なぞる順に配列を作る
+        array = findRoute(getUniqueList(use_group))
+        print(array)
+    else:
+        print("tapFan")
+        tapFan()
+            
+    if len(array) < 3:
+        tapFan()
+        print("tapFan3IKA")
 
     ############# Debug
     cv2.imshow('color', color_img)
