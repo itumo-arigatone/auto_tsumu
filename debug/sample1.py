@@ -4,7 +4,7 @@ import math
 import pyautogui
 import sys
 
-img_path = "./img/sample.png"
+img_path = "../img/sample.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
 
@@ -15,41 +15,6 @@ def averageColor(crop, ancestor):
     b = crop.T[0].flatten().mean()
     g = crop.T[1].flatten().mean()
     r = crop.T[2].flatten().mean()
-
-    if b == "nan" or g == "nan" or r == "nan":
-        b = 255
-        g = 255
-        r = 255
-    
-    # ダサすぎる
-    if b <= 85:
-        b = 40
-    elif 85 < b <= 180:
-        b = 120
-    elif 180 < b <=255:
-        b = 210
-    
-    if g <= 85:
-        g = 40
-    elif 85 < g <= 180:
-        g = 120
-    elif 180 < g <=255:
-        g = 210
-
-    if r <= 85:
-        r = 40
-    elif 85 < r <= 180:
-        r = 120
-    elif 180 < r <=255:
-        r = 210
-
-    if r == 210 or g == 210 or b == 210:
-        if r < 210:
-            r = 0
-        if g < 210:
-            g = 0
-        if b < 210:
-            b = 0
 
     color = {
         "blue": b,
@@ -191,6 +156,26 @@ def gamma_correction(img, gamma):
 
     return cv2.LUT(img, table)
 
+def hsv_decision(rgb):
+    # BGRからHSVに変換
+    imgBoxHsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
+
+    # HSV平均値を取得
+    # flattenで一次元化しmeanで平均を取得 
+    h = imgBoxHsv.T[0].flatten().mean()
+    s = imgBoxHsv.T[1].flatten().mean()
+    v = imgBoxHsv.T[2].flatten().mean()
+
+    # HSV平均値を出力
+    print("Hue: %.2f" % (h))
+    print("Salute: %.2f" % (s))
+    print("Value: %.2f" % (v))
+    return {
+        "h": h,
+        "s": s,
+        "v": v
+    }
+
 def main():
     # 処理の最初でスクショを取得する
     # capture()
@@ -198,16 +183,15 @@ def main():
     img = cv2.imread(img_path,0)
     color_img = cv2.imread(img_path)
     ancestor = cv2.imread(img_path)
-        
+
     # コントラスト、明るさを変更する。
-    constract = gamma_correction(ancestor, gamma=2.5)
+    ancestor = gamma_correction(ancestor, gamma=2.5)
 
     # トリミング
-    x, y = 0, 450
-    h, w = 800, 720
-    ancestor = constract[y:y+h, x:x+w]
-    color_img = color_img[y:y+h, x:x+w]
-    img = img[y:y+h, x:x+w]
+    # x, y = 0, 450
+    # h, w = 800, 720
+    # color_img = color_img[y:y+h, x:x+w]
+    # img = img[y:y+h, x:x+w]
 
     circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=60,param2=15,minRadius=35,maxRadius=45)
     circles = np.uint16(np.around(circles))
@@ -218,8 +202,10 @@ def main():
         crop = ancestor[i[1]-9:i[1]+9, i[0]-9:i[0]+9]
         color = averageColor(crop, ancestor)
 
+        hsv_color = hsv_decision(crop)
+
         cercle_info.append({
-            "color": color,
+            "color": hsv_color,
             "center_x": i[0],
             "center_y": i[1],
         })
@@ -230,15 +216,15 @@ def main():
             color_img,
             (k["center_x"], k["center_y"]),
             45,
-            (k["color"]["blue"], k["color"]["green"], k["color"]["red"]),
+            (k["color"]["h"], k["color"]["s"], k["color"]["v"]),
             -1
         )
         # 色の種類
         all_list.append(
             {
-            "blue": k["color"]["blue"],
-            "green": k["color"]["green"],
-            "red": k["color"]["red"]
+            "h": k["color"]["h"],
+            "s": k["color"]["s"],
+            "v": k["color"]["v"]
             }
         )
 
@@ -249,7 +235,7 @@ def main():
     for i in color_list:
         sub = []
         for j in cercle_info:
-            if i["blue"] == j["color"]["blue"] and i["green"] == j["color"]["green"] and i["red"] == j["color"]["red"]:
+            if i["h"] == j["color"]["h"] and i["s"] == j["color"]["s"] and i["v"] == j["color"]["v"]:
                 sub.append(j)
         
         if len(sub) >= 3:
