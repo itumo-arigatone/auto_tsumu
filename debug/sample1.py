@@ -200,7 +200,7 @@ def main():
     for i in circles[0,:]:
         # 中心周辺の色を取得する
         crop = ancestor[i[1]-9:i[1]+9, i[0]-9:i[0]+9]
-        color = averageColor(crop, ancestor)
+        #color = averageColor(crop, ancestor)
 
         hsv_color = hsv_decision(crop)
 

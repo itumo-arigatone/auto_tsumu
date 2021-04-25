@@ -187,10 +187,12 @@ def makeRoute(startNode, group, result):
     return makeRoute(start, gr, result)
 
 def tapFan():
-    pyautogui.mouseDown(window_position[0] + 677, window_position[1] + 1250, button='left')
-    pyautogui.mouseUp(window_position[0] + 677, window_position[1] + 1250, button='left')
+    pyautogui.mouseDown(window_position[0] + 677, window_position[1] + 900, button='left')
+    pyautogui.mouseUp(window_position[0] + 677, window_position[1] + 900, button='left')
+    logging.debug('debug %s', 'tapFan')
 
 def connectTsumu(array):
+    logging.debug('debug %s', 'moveMouse')
     # ここからPCのカーソルを操作する
     # 中心点を繋ぐ処理
     first = True
@@ -207,6 +209,22 @@ def connectTsumu(array):
             # クリックを解除
             pyautogui.mouseUp(window_position[0] + int(i["center_x"]), 450 + window_position[1] + int(i["center_y"]), button='left')
 
+def hsv_decision(rgb):
+    # BGRからHSVに変換
+    imgBoxHsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
+
+    # HSV平均値を取得
+    # flattenで一次元化しmeanで平均を取得 
+    h = imgBoxHsv.T[0].flatten().mean()
+    s = imgBoxHsv.T[1].flatten().mean()
+    v = imgBoxHsv.T[2].flatten().mean()
+
+    # HSV平均値を出力
+    return {
+        "h": h,
+        "s": s,
+        "v": v
+    }
 
 def main():
     logging.info('info %s', 'mainstart')
@@ -225,11 +243,11 @@ def main():
             constract = gamma_correction(ancestor, gamma=2.5)
             
             # トリミング
-            x, y = 0, 450
-            h, w = 800, 720
-            ancestor = constract[y:y+h, x:x+w]
-            color_img = color_img[y:y+h, x:x+w]
-            img = img[y:y+h, x:x+w]
+            # x, y = 0, 450
+            # h, w = 800, 720
+            # ancestor = constract[y:y+h, x:x+w]
+            # color_img = color_img[y:y+h, x:x+w]
+            # img = img[y:y+h, x:x+w]
 
             
             circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,80,param1=50,param2=20,minRadius=35,maxRadius=60)
@@ -238,11 +256,13 @@ def main():
             cercle_info = []
             for i in circles[0,:]:
                 # 中心周辺の色を取得する
-                crop = ancestor[i[1]-10:i[1]+10, i[0]-10:i[0]+10]
-                color = averageColor(crop, ancestor)
+                crop = ancestor[i[1]-9:i[1]+9, i[0]-9:i[0]+9]
+                #color = averageColor(crop, ancestor)
+
+                hsv_color = hsv_decision(crop)
 
                 cercle_info.append({
-                    "color": color,
+                    "color": hsv_color,
                     "center_x": i[0],
                     "center_y": i[1],
                 })
@@ -253,15 +273,15 @@ def main():
                     color_img,
                     (k["center_x"], k["center_y"]),
                     50,
-                    (k["color"]["blue"], k["color"]["green"], k["color"]["red"]),
+                    (k["color"]["h"], k["color"]["s"], k["color"]["v"]),
                     -1
                 )
                 # 色の種類
                 all_list.append(
                     {
-                    "blue": k["color"]["blue"],
-                    "green": k["color"]["green"],
-                    "red": k["color"]["red"]
+                    "h": k["color"]["h"],
+                    "s": k["color"]["s"],
+                    "v": k["color"]["v"]
                     }
                 )
 
@@ -272,7 +292,7 @@ def main():
             for i in color_list:
                 sub = []
                 for j in cercle_info:
-                    if i["blue"] == j["color"]["blue"] and i["green"] == j["color"]["green"] and i["red"] == j["color"]["red"]:
+                    if i["h"] == j["color"]["h"] and i["s"] == j["color"]["s"] and i["v"] == j["color"]["v"]:
                         sub.append(j)
                 
                 if len(sub) >= 3:
@@ -289,8 +309,14 @@ def main():
                     if len(k) > most_length:
                         most_length = len(k)
                         use_group = k
-            # ルート検索,なぞる順に配列を作る
-            array = findRoute(getUniqueList(use_group))
+
+            if use_group != None:
+                # ルート検索,なぞる順に配列を作る
+                array = findRoute(getUniqueList(use_group))
+            else:
+                tapFan()
+                continue
+            
             if len(array) < 3:
                 tapFan()
                 continue
