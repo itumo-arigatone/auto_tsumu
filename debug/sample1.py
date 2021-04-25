@@ -4,59 +4,9 @@ import math
 import pyautogui
 import sys
 
-img_path = "./img/sample.png"
+img_path = "../img/sample.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
-
-# 中心周辺の色を平均可してツムを色にする
-def averageColor(crop, ancestor):
-    # RGB平均値を出力
-    # flattenで一次元化しmeanで平均を取得 
-    b = crop.T[0].flatten().mean()
-    g = crop.T[1].flatten().mean()
-    r = crop.T[2].flatten().mean()
-
-    if b == "nan" or g == "nan" or r == "nan":
-        b = 255
-        g = 255
-        r = 255
-    
-    # ダサすぎる
-    if b <= 85:
-        b = 40
-    elif 85 < b <= 180:
-        b = 120
-    elif 180 < b <=255:
-        b = 210
-    
-    if g <= 85:
-        g = 40
-    elif 85 < g <= 180:
-        g = 120
-    elif 180 < g <=255:
-        g = 210
-
-    if r <= 85:
-        r = 40
-    elif 85 < r <= 180:
-        r = 120
-    elif 180 < r <=255:
-        r = 210
-
-    if r == 210 or g == 210 or b == 210:
-        if r < 210:
-            r = 0
-        if g < 210:
-            g = 0
-        if b < 210:
-            b = 0
-
-    color = {
-        "blue": b,
-        "green": g,
-        "red":r
-    }
-    return color
 
 # ダブりを消す処理
 def getUniqueList(seq):
@@ -191,6 +141,59 @@ def gamma_correction(img, gamma):
 
     return cv2.LUT(img, table)
 
+def hsv_decision(rgb):
+    # BGRからHSVに変換
+    imgBoxHsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
+
+    # HSV平均値を取得
+    # flattenで一次元化しmeanで平均を取得 
+    h = round(imgBoxHsv.T[0].flatten().mean(), -1)
+    s = round(imgBoxHsv.T[1].flatten().mean(), -1)
+    v = round(imgBoxHsv.T[2].flatten().mean(), -1)
+    # ダサすぎる
+    if h <= 36:
+        h = 0
+    elif 36 < h <= 72:
+        h = 37
+    elif 72 < h <= 108:
+        h = 73
+    elif 108 < h <= 144:
+        h = 109
+    elif 144 < h <= 180:
+        h = 145
+    
+    if s <= 51:
+        s = 0
+    elif 51 < s <= 102:
+        s = 52
+    elif 102 < s <= 153:
+        s = 103
+    elif 153 < s <= 204:
+        s = 154
+    elif 204 < s <= 255:
+        s = 205
+
+    if v <= 51:
+        v = 0
+    elif 51 < v <= 102:
+        v = 52
+    elif 102 < v <= 153:
+        v = 103
+    elif 153 < v <= 204:
+        v = 154
+    elif 204 < v <= 255:
+        v = 205
+
+    # HSV平均値を出力
+    print("Hue: %.2f" % (h))
+    print("Salute: %.2f" % (s))
+    print("Value: %.2f" % (v))
+    return {
+        "h": h,
+        "s": s,
+        "v": v
+    }
+
 def main():
     # 処理の最初でスクショを取得する
     # capture()
@@ -198,16 +201,15 @@ def main():
     img = cv2.imread(img_path,0)
     color_img = cv2.imread(img_path)
     ancestor = cv2.imread(img_path)
-        
+
     # コントラスト、明るさを変更する。
-    constract = gamma_correction(ancestor, gamma=2.5)
+    ancestor = gamma_correction(ancestor, gamma=1.8)
 
     # トリミング
-    x, y = 0, 450
-    h, w = 800, 720
-    ancestor = constract[y:y+h, x:x+w]
-    color_img = color_img[y:y+h, x:x+w]
-    img = img[y:y+h, x:x+w]
+    # x, y = 0, 450
+    # h, w = 800, 720
+    # color_img = color_img[y:y+h, x:x+w]
+    # img = img[y:y+h, x:x+w]
 
     circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=60,param2=15,minRadius=35,maxRadius=45)
     circles = np.uint16(np.around(circles))
@@ -215,11 +217,12 @@ def main():
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-        crop = ancestor[i[1]-9:i[1]+9, i[0]-9:i[0]+9]
-        color = averageColor(crop, ancestor)
+        crop = ancestor[i[1]-6:i[1]+6, i[0]-6:i[0]+6]
+
+        hsv_color = hsv_decision(crop)
 
         cercle_info.append({
-            "color": color,
+            "color": hsv_color,
             "center_x": i[0],
             "center_y": i[1],
         })
@@ -230,15 +233,15 @@ def main():
             color_img,
             (k["center_x"], k["center_y"]),
             45,
-            (k["color"]["blue"], k["color"]["green"], k["color"]["red"]),
+            (k["color"]["h"], k["color"]["s"], k["color"]["v"]),
             -1
         )
         # 色の種類
         all_list.append(
             {
-            "blue": k["color"]["blue"],
-            "green": k["color"]["green"],
-            "red": k["color"]["red"]
+            "h": k["color"]["h"],
+            "s": k["color"]["s"],
+            "v": k["color"]["v"]
             }
         )
 
@@ -249,11 +252,12 @@ def main():
     for i in color_list:
         sub = []
         for j in cercle_info:
-            if i["blue"] == j["color"]["blue"] and i["green"] == j["color"]["green"] and i["red"] == j["color"]["red"]:
+            if i["h"] == j["color"]["h"] and i["s"] == j["color"]["s"] and i["v"] == j["color"]["v"]:
                 sub.append(j)
         
         if len(sub) >= 3:
             group.append(sub)
+            print("create group")
     color_group = []
     for i in group:
         color_group.append(findNearPlaceTsumu(i))
@@ -266,6 +270,18 @@ def main():
             if len(k) > most_length:
                 most_length = len(k)
                 use_group = k
+    
+    if use_group != None:
+        # ルート検索,なぞる順に配列を作る
+        array = findRoute(getUniqueList(use_group))
+        print(array)
+    else:
+        print("tapFan")
+        tapFan()
+            
+    if len(array) < 3:
+        tapFan()
+        print("tapFan3IKA")
 
     ############# Debug
     cv2.imshow('color', color_img)

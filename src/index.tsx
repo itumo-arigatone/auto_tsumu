@@ -62,7 +62,7 @@ class StartButton extends React.Component {
     // python を呼び出す
     const command =
       'python ./src/python/tsumu.py SCV42 ' + window.x * 2 + ' ' + window.y * 2;
-    ChildProcess.exec(command, (error, stdout, stderr) => {
+    ChildProcess.exec(command, { maxBuffer: 1024 * 500 }, (error, stdout, stderr) => {
       if (error != null) {
         ipcRenderer.invoke('pyEnd', error + '');
         // TODO 画面に書き込む処理
