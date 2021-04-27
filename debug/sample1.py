@@ -185,9 +185,6 @@ def hsv_decision(rgb):
         v = 205
 
     # HSV平均値を出力
-    print("Hue: %.2f" % (h))
-    print("Salute: %.2f" % (s))
-    print("Value: %.2f" % (v))
     return {
         "h": h,
         "s": s,
@@ -257,31 +254,35 @@ def main():
         
         if len(sub) >= 3:
             group.append(sub)
-            print("create group")
     color_group = []
     for i in group:
+        # 近くのツムを見つけてグループ化
         color_group.append(findNearPlaceTsumu(i))
+    # 1つの配列にまとめる
+    all_groups = sum(color_group, [])
 
     # 繋げるツムの選択
     most_length = 0
-    use_group = None
-    for i in color_group:
-        for k in i:
-            if len(k) > most_length:
-                most_length = len(k)
-                use_group = k
+    use_group = []
+    # 最大から3つになるまで取得
     
-    if use_group != None:
-        # ルート検索,なぞる順に配列を作る
-        array = findRoute(getUniqueList(use_group))
-        print(array)
-    else:
-        print("tapFan")
-        tapFan()
-            
-    if len(array) < 3:
-        tapFan()
-        print("tapFan3IKA")
+    for i in range(len(all_groups)):
+        maxLength = max(len(v) for v in all_groups)
+        if maxLength > 2:
+            all_groups[[len(v) for v in all_groups].index(maxLength)]
+            use_group.append(all_groups[[len(v) for v in all_groups].index(maxLength)])
+            # 大きい物から削除していく
+            all_groups.remove(all_groups[[len(v) for v in all_groups].index(maxLength)])
+
+    print(len(use_group))
+
+    # ルート検索,なぞる順に配列を作る
+    for i in use_group:
+        array = findRoute(getUniqueList(i))
+        k = 0
+        for j in array:
+            k += 1
+            cv2.putText(color_img, str(k), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 5, (0,0,0), 5, 4)
 
     ############# Debug
     cv2.imshow('color', color_img)
