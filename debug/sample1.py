@@ -75,11 +75,8 @@ def findNearPlaceTsumu(group):
 def findRoute(group):
     # 開始ノード取得
     start = getStartNode(group)
-    # TODO 以下、再帰関数 つながるところからつながるところを見つける
-    # TODO つながるところを発見する
     group.remove(start)
     routeArray = makeRoute(start, group, [start])
-        # TODO 開始ノードが[0]で,1,2,3,4
     return routeArray
 
 def getStartNode(group):
@@ -265,7 +262,6 @@ def main():
     most_length = 0
     use_group = []
     # 最大から3つになるまで取得
-    
     for i in range(len(all_groups)):
         maxLength = max(len(v) for v in all_groups)
         if maxLength > 2:
@@ -279,6 +275,8 @@ def main():
     # ルート検索,なぞる順に配列を作る
     for i in use_group:
         array = findRoute(getUniqueList(i))
+        if len(array) < 3:
+            continue
         k = 0
         for j in array:
             k += 1
