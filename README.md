@@ -31,9 +31,7 @@ pip install pywinauto
 https://www.vysor.io/
 
 ## use auto_tsum
-1. Play tsumu-tsumu
-2. Hover over the top left corner of the Vysor window
-3. Execute below command ↓
 ```sh
-python tsumu.py
+npm start
 ```
+hover the vyser window corner on blue mark.
