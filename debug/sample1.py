@@ -259,7 +259,6 @@ def main():
     all_groups = sum(color_group, [])
 
     # 繋げるツムの選択
-    most_length = 0
     use_group = []
     # 最大から3つになるまで取得
     for i in range(len(all_groups)):

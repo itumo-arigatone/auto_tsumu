@@ -98,19 +98,10 @@ def findNearPlaceTsumu(group):
 # group 円の情報の配列
 def findRoute(group):
     # 開始ノード取得
-    routeList = []
     start = getStartNode(group)
     group.remove(start)
     routeArray = makeRoute(start, group, [start])
-    for i in routeArray:
-        group.remove(i)
-    if len(routeArray) >= 3:
-        return routeList.append(routeArray)
-    
-    if len(group) >= 3:
-        return findRoute(group)
-    else:
-        return routeList
+    return routeArray
 
 def getStartNode(group):
     for i in group:
@@ -143,8 +134,8 @@ def makeRoute(startNode, group, result):
     return makeRoute(start, gr, result)
 
 def tapFan():
-    pyautogui.mouseDown(window_position[0] + 650, window_position[1] + 1300, button='left')
-    pyautogui.mouseUp(window_position[0] + 650, window_position[1] + 1300, button='left')
+    pyautogui.mouseDown(window_position[0] + 550, window_position[1] + 1300, button='left')
+    pyautogui.mouseUp(window_position[0] + 550, window_position[1] + 1300, button='left')
     logging.debug('debug %s', 'tapFan')
 
 def connectTsumu(array):
@@ -228,7 +219,7 @@ def main():
             ancestor = cv2.imread(img_path)
 
             # コントラスト、明るさを変更する。
-            constract = gamma_correction(ancestor, gamma=1.8)
+            constract = gamma_correction(ancestor, gamma=1.5)
             
             circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT,1,80,param1=50,param2=20,minRadius=35,maxRadius=60)
             circles = np.uint16(np.around(circles))
@@ -285,7 +276,6 @@ def main():
             all_groups = sum(color_group, [])
 
             # 繋げるツムの選択
-            most_length = 0
             use_group = []
             # 最大から3つになるまで取得
             for i in range(len(all_groups)):
@@ -295,22 +285,17 @@ def main():
                     use_group.append(all_groups[[len(v) for v in all_groups].index(maxLength)])
                     # 大きい物から削除していく
                     all_groups.remove(all_groups[[len(v) for v in all_groups].index(maxLength)])
-            #円の数が一番多い色のグループを見つける
-            for i in color_group:
-                for k in i:
-                    if len(k) > most_length:
-                        most_length = len(k)
-                        use_group = k
 
             # ルート検索,なぞる順に配列を作る
-            # TODO 二次元配列にして一度のループで何グループも消すようにする
+            # 二次元配列にして一度のループで何グループも消すようにする
             if len(use_group) == 0:
                 tapFan()
                 continue
             for i in use_group:
                 array = findRoute(getUniqueList(i))
-                for j in array:
-                    connectTsumu(j)
+                if len(array) >= 3:
+                    logging.debug('debu %s', len(array))
+                    connectTsumu(array)
     except KeyboardInterrupt:
         print('!!FINISH!!')
 
