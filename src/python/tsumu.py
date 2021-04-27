@@ -94,17 +94,23 @@ def findNearPlaceTsumu(group):
                     break
     return all_color_group
 
-# ルートを検索する処理
-# param 円の情報の配列
+# できる限りのルートを検索して2次元配列を返す
+# group 円の情報の配列
 def findRoute(group):
     # 開始ノード取得
+    routeList = []
     start = getStartNode(group)
-    # TODO 以下、再帰関数 つながるところからつながるところを見つける
-    # TODO つながるところを発見する
     group.remove(start)
     routeArray = makeRoute(start, group, [start])
-        # TODO 開始ノードが[0]で,1,2,3,4
-    return routeArray
+    for routeArray in i:
+        group.remove(i)
+    if len(routeArray) >= 3:
+        return routeList.append(routeArray)
+    
+    if len(group) >= 3:
+        return findRoute(group)
+    else:
+        return routeList
 
 def getStartNode(group):
     for i in group:
@@ -278,6 +284,7 @@ def main():
             # 繋げるツムの選択
             most_length = 0
             use_group = None
+            #円の数が一番多い色のグループを見つける
             for i in color_group:
                 for k in i:
                     if len(k) > most_length:
@@ -286,25 +293,24 @@ def main():
 
             if use_group != None:
                 # ルート検索,なぞる順に配列を作る
+                # TODO 二次元配列にして一度のループで何グループも消すようにする
                 array = findRoute(getUniqueList(use_group))
+                if len(array) == 0:
+                    tapFan()
+                    continue
             else:
                 logging.debug('info %s', 'group else')
                 tapFan()
                 continue
-            
-            if len(array) < 3:
-                logging.debug('info %s', '3ika')
-                tapFan()
-                continue
-            connectTsumu(array)
+
+            for array in i:
+                connectTsumu(i)
     except KeyboardInterrupt:
         print('!!FINISH!!')
 
     # end process
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-logging.info('info %s', 'if mae')
 
 if __name__ == "__main__":
     main()
