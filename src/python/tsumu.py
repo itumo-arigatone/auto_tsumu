@@ -102,7 +102,7 @@ def findRoute(group):
     start = getStartNode(group)
     group.remove(start)
     routeArray = makeRoute(start, group, [start])
-    for routeArray in i:
+    for i in routeArray:
         group.remove(i)
     if len(routeArray) >= 3:
         return routeList.append(routeArray)
@@ -281,9 +281,20 @@ def main():
             for i in group:
                 color_group.append(findNearPlaceTsumu(i))
 
+            # 1つの配列にまとめる
+            all_groups = sum(color_group, [])
+
             # 繋げるツムの選択
             most_length = 0
-            use_group = None
+            use_group = []
+            # 最大から3つになるまで取得
+            for i in range(len(all_groups)):
+                maxLength = max(len(v) for v in all_groups)
+                if maxLength > 2:
+                    all_groups[[len(v) for v in all_groups].index(maxLength)]
+                    use_group.append(all_groups[[len(v) for v in all_groups].index(maxLength)])
+                    # 大きい物から削除していく
+                    all_groups.remove(all_groups[[len(v) for v in all_groups].index(maxLength)])
             #円の数が一番多い色のグループを見つける
             for i in color_group:
                 for k in i:
@@ -291,20 +302,15 @@ def main():
                         most_length = len(k)
                         use_group = k
 
-            if use_group != None:
-                # ルート検索,なぞる順に配列を作る
-                # TODO 二次元配列にして一度のループで何グループも消すようにする
-                array = findRoute(getUniqueList(use_group))
-                if len(array) == 0:
-                    tapFan()
-                    continue
-            else:
-                logging.debug('info %s', 'group else')
+            # ルート検索,なぞる順に配列を作る
+            # TODO 二次元配列にして一度のループで何グループも消すようにする
+            if len(use_group) == 0:
                 tapFan()
                 continue
-
-            for array in i:
-                connectTsumu(i)
+            for i in use_group:
+                array = findRoute(getUniqueList(i))
+                for j in array:
+                    connectTsumu(j)
     except KeyboardInterrupt:
         print('!!FINISH!!')
 
