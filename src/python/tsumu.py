@@ -219,7 +219,7 @@ def main():
             ancestor = cv2.imread(img_path)
 
             # コントラスト、明るさを変更する。
-            constract = gamma_correction(ancestor, gamma=1.5)
+            constract = gamma_correction(ancestor, gamma=1.7)
             
             circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT,1,80,param1=50,param2=20,minRadius=35,maxRadius=60)
             circles = np.uint16(np.around(circles))
@@ -281,21 +281,13 @@ def main():
             for i in range(len(all_groups)):
                 maxLength = max(len(v) for v in all_groups)
                 if maxLength > 2:
-                    all_groups[[len(v) for v in all_groups].index(maxLength)]
                     use_group.append(all_groups[[len(v) for v in all_groups].index(maxLength)])
-                    # 大きい物から削除していく
+                    array = findRoute(
+                        getUniqueList(all_groups[[len(v) for v in all_groups].index(maxLength)])
+                    )
                     all_groups.remove(all_groups[[len(v) for v in all_groups].index(maxLength)])
-
-            # ルート検索,なぞる順に配列を作る
-            # 二次元配列にして一度のループで何グループも消すようにする
-            if len(use_group) == 0:
-                tapFan()
-                continue
-            for i in use_group:
-                array = findRoute(getUniqueList(i))
-                if len(array) >= 3:
-                    logging.debug('debu %s', len(array))
-                    connectTsumu(array)
+                    if len(array) >= 3:
+                        connectTsumu(array)
     except KeyboardInterrupt:
         print('!!FINISH!!')
 
