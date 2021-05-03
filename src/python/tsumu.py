@@ -146,15 +146,15 @@ def connectTsumu(array):
     index = 0
     for i in array:
         # 移動
-        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), duration=0.01)
+        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]-100), duration=0.01)
         if first:
             # スタート地点からクリックする
-            pyautogui.mouseDown(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), button='left')
+            pyautogui.mouseDown(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]-100), button='left')
             first = False
         index += 1
         if index == len(array):
             # クリックを解除
-            pyautogui.mouseUp(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), button='left')
+            pyautogui.mouseUp(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]-100), button='left')
 
 def hsv_decision(rgb):
     # BGRからHSVに変換
@@ -219,7 +219,7 @@ def main():
             ancestor = cv2.imread(img_path)
 
             # コントラスト、明るさを変更する。
-            constract = gamma_correction(ancestor, gamma=1.7)
+            constract = gamma_correction(ancestor, gamma=1.5)
             
             circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT,1,80,param1=50,param2=20,minRadius=35,maxRadius=60)
             circles = np.uint16(np.around(circles))
@@ -267,7 +267,6 @@ def main():
                 
                 if len(sub) >= 3:
                     group.append(sub)
-                    logging.debug('debug %s', 'create Group')
             color_group = []
             for i in group:
                 color_group.append(findNearPlaceTsumu(i))
@@ -277,6 +276,7 @@ def main():
 
             # 繋げるツムの選択
             use_group = []
+            connected = False
             # 最大から3つになるまで取得
             for i in range(len(all_groups)):
                 maxLength = max(len(v) for v in all_groups)
@@ -288,6 +288,9 @@ def main():
                     all_groups.remove(all_groups[[len(v) for v in all_groups].index(maxLength)])
                     if len(array) >= 3:
                         connectTsumu(array)
+                        connected = True
+            if not connected:
+                tapFan()
     except KeyboardInterrupt:
         print('!!FINISH!!')
 
