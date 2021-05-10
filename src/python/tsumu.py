@@ -3,7 +3,9 @@ import numpy as np
 import math
 import pyautogui
 import sys
+import keyboard
 from pywinauto import application
+from concurrent import futures
 import logging
 
 img_path = "./img/window.png"
@@ -11,14 +13,21 @@ args = sys.argv
 # windowの左上角の座標を取得する
 window_position = [int(args[2]), int(args[3])]
 
+quit_flg = False
+
 # ログレベルを DEBUG に変更
 logging.basicConfig(filename='./dist/logger.log', level=logging.DEBUG)
 # logging のみの書き方
-# logging.info('info %s %s', 'test', 'test')
 logging.info('info %s', args[1])
 logging.info('info %s', args[2])
 logging.info('info %s', args[3])
 
+def getEndCommand():
+    global quit_flg
+    while not quit_flg:
+        if keyboard.read_event().event_type == keyboard.KEY_DOWN:
+            quit_flg = True
+            logging.info('stop key')
 
 def capture():
     app = application.Application().connect(title_re="Vysor", visible_only="True")
@@ -210,8 +219,9 @@ def hsv_decision(rgb):
 
 def main():
     logging.info('info %s', 'mainstart')
+    global quit_flg
     try:
-        while True:
+        while not quit_flg:
             # 処理の最初でスクショを取得する
             capture()
             # 取得したスクショをいじる
@@ -292,6 +302,7 @@ def main():
             if not connected:
                 tapFan()
     except KeyboardInterrupt:
+        quit_flg = True
         print('!!FINISH!!')
 
     # end process
@@ -299,4 +310,9 @@ def main():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    main()
+    future_list = []
+    with futures.ThreadPoolExecutor(max_workers=4) as executor:
+        future1 = executor.submit(main)
+        future2 = executor.submit(getEndCommand)
+        future_list.append(future1)
+    logging.info("all complete")

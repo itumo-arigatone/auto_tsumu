@@ -27,6 +27,12 @@ pip install pyautogui
 pip install pywinauto
 ```
 
+## build
+electron application build command
+```sh
+npm run build
+```
+
 ## install Vysor
 https://www.vysor.io/
 
