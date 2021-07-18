@@ -17,6 +17,8 @@ pip install opencv-python
 1. Open cmd
 2. Execute below command ↓
 ```sh
+pip install xlib
+pip install wheel
 pip install pyautogui
 ```
 
