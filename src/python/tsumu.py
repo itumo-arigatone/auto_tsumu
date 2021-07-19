@@ -75,7 +75,7 @@ def findNearPlaceTsumu(group):
                 for k in gr:
                     x = (int(i["center_x"]) - int(k["center_x"])) ** 2
                     y = (int(i["center_y"]) - int(k["center_y"])) ** 2
-                    if 0 < math.sqrt(x+y) <= 130:
+                    if 0 < math.sqrt(x+y) <= 80:
                         near.append(k)
                         color_group.append(k)
                 if len(near) == 0:
@@ -90,7 +90,7 @@ def findNearPlaceTsumu(group):
                             break
                         x = (int(j["center_x"]) - int(k["center_x"])) ** 2
                         y = (int(j["center_y"]) - int(k["center_y"])) ** 2
-                        if 0 < math.sqrt(x+y) <= 130:
+                        if 0 < math.sqrt(x+y) <= 80:
                             # 新たなnearができる
                             new_near.append(k)
                             color_group.append(k)
@@ -118,7 +118,7 @@ def getStartNode(group):
         for j in group:
             x = (int(i["center_x"]) - int(j["center_x"])) ** 2
             y = (int(i["center_y"]) - int(j["center_y"])) ** 2
-            if 0 < math.sqrt(x+y) <= 130:
+            if 0 < math.sqrt(x+y) <= 80:
                 node += 1
         if node == 1:
             return i
@@ -131,7 +131,7 @@ def makeRoute(startNode, group, result):
     for i in gr:
         x = (int(start["center_x"]) - int(i["center_x"])) ** 2
         y = (int(start["center_y"]) - int(i["center_y"])) ** 2
-        if 0 < math.sqrt(x+y) <= 130:
+        if 0 < math.sqrt(x+y) <= 80:
             result.append(i)
             start = i
             gr.remove(i)
@@ -174,41 +174,25 @@ def hsv_decision(rgb):
     h = round(imgBoxHsv.T[0].flatten().mean(), 0)
     s = round(imgBoxHsv.T[1].flatten().mean(), 0)
     v = round(imgBoxHsv.T[2].flatten().mean(), 0)
-        # ダサすぎる
-    if h <= 36:
-        h = 0
-    elif 36 < h <= 72:
-        h = 37
-    elif 72 < h <= 108:
-        h = 73
-    elif 108 < h <= 144:
-        h = 109
-    elif 144 < h <= 180:
-        h = 145
     
-    if s <= 51:
-        s = 0
-    elif 51 < s <= 102:
-        s = 52
-    elif 102 < s <= 153:
-        s = 103
-    elif 153 < s <= 204:
-        s = 154
-    elif 204 < s <= 255:
-        s = 205
-
-    if v <= 51:
-        v = 0
-    elif 51 < v <= 102:
-        v = 52
-    elif 102 < v <= 153:
-        v = 103
-    elif 153 < v <= 204:
-        v = 154
-    elif 204 < v <= 255:
-        v = 205
-
-    # 小数点以下を変更
+    if h < 180/9*1:
+        h = 0
+    elif 180/9*1 < h <= 180/9*2:
+        h = 1
+    elif 180/9*2 < h <= 180/9*3:
+        h = 2
+    elif 180/9*3 < h <= 180/9*4:
+        h = 3
+    elif 180/9*4 < h <= 180/9*5:
+        h = 4
+    elif 180/9*5 < h <= 180/9*6:
+        h = 5
+    elif 180/9*6 < h <= 180/9*7:
+        h = 6
+    elif 180/9*7 < h <= 180/9*8:
+        h = 7
+    elif 180/9*8 < h <= 180/9*9:
+        h = 8
 
     # HSV平均値を出力
     return {
@@ -231,7 +215,7 @@ def main():
             # コントラスト、明るさを変更する。
             constract = gamma_correction(ancestor, gamma=1.5)
             
-            circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT,1,80,param1=50,param2=20,minRadius=35,maxRadius=60)
+            circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,40,param1=60,param2=15,minRadius=20,maxRadius=25)
             circles = np.uint16(np.around(circles))
 
             cercle_info = []
@@ -252,7 +236,7 @@ def main():
                 cv2.circle(
                     ancestor,
                     (k["center_x"], k["center_y"]),
-                    50,
+                    20,
                     (k["color"]["h"], k["color"]["s"], k["color"]["v"]),
                     -1
                 )
@@ -272,7 +256,7 @@ def main():
             for i in color_list:
                 sub = []
                 for j in cercle_info:
-                    if i["h"] == j["color"]["h"] and i["s"] == j["color"]["s"] and i["v"] == j["color"]["v"]:
+                    if i["h"] == j["color"]["h"]:
                         sub.append(j)
                 
                 if len(sub) >= 3:
