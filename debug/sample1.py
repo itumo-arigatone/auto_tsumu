@@ -4,7 +4,7 @@ import math
 import pyautogui
 import sys
 
-img_path = "../img/sample.png"
+img_path = "./img/sample.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
 
