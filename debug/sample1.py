@@ -42,7 +42,7 @@ def findNearPlaceTsumu(group):
                 for k in gr:
                     x = (int(i["center_x"]) - int(k["center_x"])) ** 2
                     y = (int(i["center_y"]) - int(k["center_y"])) ** 2
-                    if 0 < math.sqrt(x+y) <= 140:
+                    if 0 < math.sqrt(x+y) <= 80:
                         near.append(k)
                         color_group.append(k)
                 if len(near) == 0:
@@ -57,7 +57,7 @@ def findNearPlaceTsumu(group):
                             break
                         x = (int(j["center_x"]) - int(k["center_x"])) ** 2
                         y = (int(j["center_y"]) - int(k["center_y"])) ** 2
-                        if 0 < math.sqrt(x+y) <= 140:
+                        if 0 < math.sqrt(x+y) <= 80:
                             # 新たなnearができる
                             new_near.append(k)
                             color_group.append(k)
@@ -75,11 +75,8 @@ def findNearPlaceTsumu(group):
 def findRoute(group):
     # 開始ノード取得
     start = getStartNode(group)
-    # TODO 以下、再帰関数 つながるところからつながるところを見つける
-    # TODO つながるところを発見する
     group.remove(start)
     routeArray = makeRoute(start, group, [start])
-        # TODO 開始ノードが[0]で,1,2,3,4
     return routeArray
 
 def getStartNode(group):
@@ -88,7 +85,7 @@ def getStartNode(group):
         for j in group:
             x = (int(i["center_x"]) - int(j["center_x"])) ** 2
             y = (int(i["center_y"]) - int(j["center_y"])) ** 2
-            if 0 < math.sqrt(x+y) <= 140:
+            if 0 < math.sqrt(x+y) <= 80:
                 node += 1
         if node == 1:
             return i
@@ -101,7 +98,7 @@ def makeRoute(startNode, group, result):
     for i in gr:
         x = (int(start["center_x"]) - int(i["center_x"])) ** 2
         y = (int(start["center_y"]) - int(i["center_y"])) ** 2
-        if 0 < math.sqrt(x+y) <= 140:
+        if 0 < math.sqrt(x+y) <= 80:
             result.append(i)
             start = i
             gr.remove(i)
@@ -123,7 +120,7 @@ def connectTsumu(array):
     index = 0
     for i in array:
         # 移動
-        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), duration=0.1)
+        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]))
         if first:
             # スタート地点からクリックする
             pyautogui.mouseDown(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
@@ -151,43 +148,27 @@ def hsv_decision(rgb):
     s = round(imgBoxHsv.T[1].flatten().mean(), -1)
     v = round(imgBoxHsv.T[2].flatten().mean(), -1)
     # ダサすぎる
-    if h <= 36:
-        h = 0
-    elif 36 < h <= 72:
-        h = 37
-    elif 72 < h <= 108:
-        h = 73
-    elif 108 < h <= 144:
-        h = 109
-    elif 144 < h <= 180:
-        h = 145
-    
-    if s <= 51:
-        s = 0
-    elif 51 < s <= 102:
-        s = 52
-    elif 102 < s <= 153:
-        s = 103
-    elif 153 < s <= 204:
-        s = 154
-    elif 204 < s <= 255:
-        s = 205
 
-    if v <= 51:
-        v = 0
-    elif 51 < v <= 102:
-        v = 52
-    elif 102 < v <= 153:
-        v = 103
-    elif 153 < v <= 204:
-        v = 154
-    elif 204 < v <= 255:
-        v = 205
+    if h < 180/9*1:
+        h = 0
+    elif 180/9*1 < h <= 180/9*2:
+        h = 1
+    elif 180/9*2 < h <= 180/9*3:
+        h = 2
+    elif 180/9*3 < h <= 180/9*4:
+        h = 3
+    elif 180/9*4 < h <= 180/9*5:
+        h = 4
+    elif 180/9*5 < h <= 180/9*6:
+        h = 5
+    elif 180/9*6 < h <= 180/9*7:
+        h = 6
+    elif 180/9*7 < h <= 180/9*8:
+        h = 7
+    elif 180/9*8 < h <= 180/9*9:
+        h = 8
 
     # HSV平均値を出力
-    print("Hue: %.2f" % (h))
-    print("Salute: %.2f" % (s))
-    print("Value: %.2f" % (v))
     return {
         "h": h,
         "s": s,
@@ -211,13 +192,13 @@ def main():
     # color_img = color_img[y:y+h, x:x+w]
     # img = img[y:y+h, x:x+w]
 
-    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=60,param2=15,minRadius=35,maxRadius=45)
+    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,40,param1=60,param2=15,minRadius=20,maxRadius=25)
     circles = np.uint16(np.around(circles))
 
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-        crop = ancestor[i[1]-6:i[1]+6, i[0]-6:i[0]+6]
+        crop = ancestor[i[1]-15:i[1]+15, i[0]-15:i[0]+15]
 
         hsv_color = hsv_decision(crop)
 
@@ -232,7 +213,7 @@ def main():
         cv2.circle(
             color_img,
             (k["center_x"], k["center_y"]),
-            45,
+            25,
             (k["color"]["h"], k["color"]["s"], k["color"]["v"]),
             -1
         )
@@ -252,36 +233,46 @@ def main():
     for i in color_list:
         sub = []
         for j in cercle_info:
-            if i["h"] == j["color"]["h"] and i["s"] == j["color"]["s"] and i["v"] == j["color"]["v"]:
+            if i["h"] == j["color"]["h"]:#and i["s"] == j["color"]["s"] and i["v"] == j["color"]["v"]:
                 sub.append(j)
         
         if len(sub) >= 3:
             group.append(sub)
-            print("create group")
     color_group = []
     for i in group:
+        # 近くのツムを見つけてグループ化
         color_group.append(findNearPlaceTsumu(i))
+    # 1つの配列にまとめる
+    all_groups = sum(color_group, [])
 
     # 繋げるツムの選択
-    most_length = 0
-    use_group = None
-    for i in color_group:
-        for k in i:
-            if len(k) > most_length:
-                most_length = len(k)
-                use_group = k
-    
-    if use_group != None:
-        # ルート検索,なぞる順に配列を作る
-        array = findRoute(getUniqueList(use_group))
-        print(array)
-    else:
-        print("tapFan")
-        tapFan()
-            
-    if len(array) < 3:
-        tapFan()
-        print("tapFan3IKA")
+    use_group = []
+    # 最大から3つになるまで取得
+    for i in range(len(all_groups)):
+        maxLength = max(len(v) for v in all_groups)
+        if maxLength > 2:
+            all_groups[[len(v) for v in all_groups].index(maxLength)]
+            use_group.append(all_groups[[len(v) for v in all_groups].index(maxLength)])
+            # 大きい物から削除していく
+            all_groups.remove(all_groups[[len(v) for v in all_groups].index(maxLength)])
+
+    print(len(use_group))
+
+    # ルート検索,なぞる順に配列を作る
+    for i in use_group:
+        array = findRoute(getUniqueList(i))
+        if len(array) < 3:
+            continue
+        k = 0
+        for j in array:
+            k += 1
+            cv2.putText(color_img, str(k), (j["center_x"]-10, j["center_y"]-15), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
+
+    for i in use_group:
+        array = getUniqueList(i)
+        for j in array:
+            # array = findRoute(getUniqueList(i))
+            cv2.putText(color_img, str(j["color"]["h"]), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
 
     ############# Debug
     cv2.imshow('color', color_img)

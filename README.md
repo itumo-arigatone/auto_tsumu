@@ -29,13 +29,17 @@ pip install pyautogui
 pip install pywinauto
 ```
 
+## build
+electron application build command
+```sh
+npm run build
+```
+
 ## install Vysor
 https://www.vysor.io/
 
 ## use auto_tsum
-1. Play tsumu-tsumu
-2. Hover over the top left corner of the Vysor window
-3. Execute below command ↓
 ```sh
-python tsumu.py
+npm start
 ```
+hover the vyser window corner on blue mark.
