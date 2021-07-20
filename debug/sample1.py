@@ -4,7 +4,7 @@ import math
 import pyautogui
 import sys
 
-img_path = "./img/sample.png"
+img_path = "./img/window.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
 
@@ -149,24 +149,35 @@ def hsv_decision(rgb):
     v = round(imgBoxHsv.T[2].flatten().mean(), -1)
     # ダサすぎる
 
-    if h < 180/9*1:
+    if h < 180/12*1:
         h = 0
-    elif 180/9*1 < h <= 180/9*2:
+    elif 180/12*1 < h <= 180/12*2:
         h = 1
-    elif 180/9*2 < h <= 180/9*3:
+    elif 180/12*2 < h <= 180/12*3:
         h = 2
-    elif 180/9*3 < h <= 180/9*4:
+    elif 180/12*3 < h <= 180/12*4:
         h = 3
-    elif 180/9*4 < h <= 180/9*5:
+    elif 180/12*4 < h <= 180/12*5:
         h = 4
-    elif 180/9*5 < h <= 180/9*6:
+    elif 180/12*5 < h <= 180/12*6:
         h = 5
-    elif 180/9*6 < h <= 180/9*7:
+    elif 180/12*6 < h <= 180/12*7:
         h = 6
-    elif 180/9*7 < h <= 180/9*8:
+    elif 180/12*7 < h <= 180/12*8:
         h = 7
-    elif 180/9*8 < h <= 180/9*9:
+    elif 180/12*8 < h <= 180/12*9:
         h = 8
+    elif 180/12*9 < h <= 180/12*10:
+        h = 9
+    elif 180/12*10 < h <= 180/12*11:
+        h = 12
+    elif 180/12*11 < h <= 180/12*12:
+        h = 11
+
+    if s < 125:
+        s =50
+    else :
+        S =100
 
     # HSV平均値を出力
     return {
@@ -184,21 +195,15 @@ def main():
     ancestor = cv2.imread(img_path)
 
     # コントラスト、明るさを変更する。
-    ancestor = gamma_correction(ancestor, gamma=1.8)
+    ancestor = gamma_correction(ancestor, gamma=2.0)
 
-    # トリミング
-    # x, y = 0, 450
-    # h, w = 800, 720
-    # color_img = color_img[y:y+h, x:x+w]
-    # img = img[y:y+h, x:x+w]
-
-    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,40,param1=60,param2=15,minRadius=20,maxRadius=25)
+    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,40,param1=60,param2=15,minRadius=25,maxRadius=35)
     circles = np.uint16(np.around(circles))
 
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-        crop = ancestor[i[1]-15:i[1]+15, i[0]-15:i[0]+15]
+        crop = ancestor[i[1]-5:i[1]+5, i[0]-5:i[0]+5]
 
         hsv_color = hsv_decision(crop)
 
@@ -233,7 +238,7 @@ def main():
     for i in color_list:
         sub = []
         for j in cercle_info:
-            if i["h"] == j["color"]["h"]:#and i["s"] == j["color"]["s"] and i["v"] == j["color"]["v"]:
+            if i["h"] == j["color"]["h"] and i["s"] == j["color"]["s"]:
                 sub.append(j)
         
         if len(sub) >= 3:
@@ -269,9 +274,7 @@ def main():
             cv2.putText(color_img, str(k), (j["center_x"]-10, j["center_y"]-15), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
 
     for i in use_group:
-        array = getUniqueList(i)
-        for j in array:
-            # array = findRoute(getUniqueList(i))
+        for j in i:
             cv2.putText(color_img, str(j["color"]["h"]), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
 
     ############# Debug

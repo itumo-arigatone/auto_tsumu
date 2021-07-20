@@ -4,14 +4,23 @@ import math
 import pyautogui
 import sys
 import keyboard
-from pywinauto import application
 from concurrent import futures
 import logging
+import ctypes
+from ctypes.wintypes import HWND, DWORD, RECT
 
 img_path = "./img/window.png"
 args = sys.argv
+
+def GetWindowRectFromName(TargetWindowTitle):
+    TargetWindowHandle = ctypes.windll.user32.FindWindowW(0, TargetWindowTitle)
+    Rectangle = ctypes.wintypes.RECT()
+    ctypes.windll.user32.GetWindowRect(TargetWindowHandle, ctypes.pointer(Rectangle))
+    return (Rectangle.left, Rectangle.top, Rectangle.right, Rectangle.bottom)
+
 # windowの左上角の座標を取得する
-window_position = [int(args[2]), int(args[3])]
+window_information = GetWindowRectFromName(args[1])
+window_position = [int(window_information[0]), int(window_information[1])]
 
 quit_flg = False
 
@@ -19,8 +28,6 @@ quit_flg = False
 logging.basicConfig(filename='./dist/logger.log', level=logging.DEBUG)
 # logging のみの書き方
 logging.info('info %s', args[1])
-logging.info('info %s', args[2])
-logging.info('info %s', args[3])
 
 def getEndCommand():
     global quit_flg
@@ -30,8 +37,15 @@ def getEndCommand():
             logging.info('stop key')
 
 def capture():
-    app = application.Application().connect(title_re="Vysor", visible_only="True")
-    app[args[1]].capture_as_image().save(img_path)
+    sc = pyautogui.screenshot(
+        region=(
+            window_information[0],
+            window_information[1],
+            window_information[2]-window_information[0],
+            window_information[3]-window_information[1]
+        )
+    )
+    sc.save(img_path)
 
 def gamma_correction(img, gamma):
     # テーブルを作成する。
@@ -155,15 +169,15 @@ def connectTsumu(array):
     index = 0
     for i in array:
         # 移動
-        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]-100), duration=0.01)
+        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), duration=0.01)
         if first:
             # スタート地点からクリックする
-            pyautogui.mouseDown(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]-100), button='left')
+            pyautogui.mouseDown(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), button='left')
             first = False
         index += 1
         if index == len(array):
             # クリックを解除
-            pyautogui.mouseUp(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]-100), button='left')
+            pyautogui.mouseUp(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), button='left')
 
 def hsv_decision(rgb):
     # BGRからHSVに変換
@@ -175,24 +189,37 @@ def hsv_decision(rgb):
     s = round(imgBoxHsv.T[1].flatten().mean(), 0)
     v = round(imgBoxHsv.T[2].flatten().mean(), 0)
     
-    if h < 180/9*1:
+    if h < 180/12*1:
         h = 0
-    elif 180/9*1 < h <= 180/9*2:
+    elif 180/12*1 < h <= 180/12*2:
         h = 1
-    elif 180/9*2 < h <= 180/9*3:
+    elif 180/12*2 < h <= 180/12*3:
         h = 2
-    elif 180/9*3 < h <= 180/9*4:
+    elif 180/12*3 < h <= 180/12*4:
         h = 3
-    elif 180/9*4 < h <= 180/9*5:
+    elif 180/12*4 < h <= 180/12*5:
         h = 4
-    elif 180/9*5 < h <= 180/9*6:
+    elif 180/12*5 < h <= 180/12*6:
         h = 5
-    elif 180/9*6 < h <= 180/9*7:
+    elif 180/12*6 < h <= 180/12*7:
         h = 6
-    elif 180/9*7 < h <= 180/9*8:
+    elif 180/12*7 < h <= 180/12*8:
         h = 7
-    elif 180/9*8 < h <= 180/9*9:
+    elif 180/12*8 < h <= 180/12*9:
         h = 8
+    elif 180/12*9 < h <= 180/12*10:
+        h = 9
+    elif 180/12*10 < h <= 180/12*11:
+        h = 12
+    elif 180/12*11 < h <= 180/12*12:
+        h = 11
+
+    if s < 255/3*1:
+        s = 0
+    elif 255/3*1 < s <= 255/3*2:
+        s = 1
+    elif 255/3*2 < s <= 255/3*3:
+        s = 2
 
     # HSV平均値を出力
     return {
@@ -215,7 +242,7 @@ def main():
             # コントラスト、明るさを変更する。
             constract = gamma_correction(ancestor, gamma=1.5)
             
-            circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,40,param1=60,param2=15,minRadius=20,maxRadius=25)
+            circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,40,param1=60,param2=15,minRadius=25,maxRadius=35)
             circles = np.uint16(np.around(circles))
 
             cercle_info = []
@@ -256,7 +283,7 @@ def main():
             for i in color_list:
                 sub = []
                 for j in cercle_info:
-                    if i["h"] == j["color"]["h"]:
+                    if i["h"] == j["color"]["h"] and i["s"] == j["color"]["s"]:
                         sub.append(j)
                 
                 if len(sub) >= 3:
