@@ -101,7 +101,7 @@ class StartButton extends React.Component {
 }
 
 /**
- * スタートボタン情報クラス
+ * log情報クラス
  * @return {void}
  */
 class Logging extends React.Component<{ msg: string }> {
@@ -114,5 +114,37 @@ class Logging extends React.Component<{ msg: string }> {
   }
 }
 
+/**
+ * input window name
+ * @param {string} e inputed message
+ * @return {void}
+ */
+class SetWindowNameBox extends React.Component {
+  state = {
+    inputValue: '',
+    styles: {
+      left: '20px',
+    },
+  };
+  handleOnChange = (e: any) => {
+    this.setState({ inputValue: e.target.value });
+  };
+  /**
+   * レンダー
+   * @return {any} input tag
+   */
+  render() {
+    return (
+      <input
+        type="text"
+        value={this.state.inputValue}
+        onChange={e => this.handleOnChange(e)}
+        style={this.state.styles}
+      />
+    );
+  }
+}
+
 ReactDOM.render(<StartButton />, document.getElementById('startButton'));
 ReactDOM.render(<Logging msg={'aa'} />, document.getElementById('messageArea'));
+ReactDOM.render(<SetWindowNameBox />, document.getElementById('findWindow'));

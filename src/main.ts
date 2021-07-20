@@ -28,6 +28,7 @@ const createWindow = (): void => {
 
   // 開発者ツールを起動する
   // win.webContents.openDevTools();
+  win.setPosition(10, 0);
 };
 
 // Electronの起動準備が終わったら、ウィンドウを作成する。

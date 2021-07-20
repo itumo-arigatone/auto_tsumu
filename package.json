@@ -2,11 +2,20 @@
   "name": "centerglassapp",
   "version": "1.0.0",
   "description": "Create a Windows application with a transparent center.",
-  "main": "index.js",
+  "main": "./dist/main.js",
   "scripts": {
     "start": "electron ./dist/main.js",
     "build:main": "tsc",
     "build:render": "webpack"
+  },
+  "build": {
+    "appId": "com.unkomorasi01.auto_tsumu",
+    "productName": "autoTsumu",
+    "extends": null,
+    "files": [
+      "./build/**/*",
+      "./dist/main.js"
+    ]
   },
   "repository": {
     "type": "git",
