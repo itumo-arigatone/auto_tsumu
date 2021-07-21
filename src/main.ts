@@ -8,11 +8,9 @@ const createWindow = (): void => {
   // レンダープロセスとなる、ウィンドウオブジェクトを作成する。
   win = new BrowserWindow({
     width: 900,
-    height: 900,
-    transparent: true,
-    frame: false,
-    resizable: false,
-    alwaysOnTop: true,
+    height: 500,
+    frame: true,
+    resizable: true,
     webPreferences: {
       // ローカルで完結するためtrueにする
       nodeIntegration: true,
