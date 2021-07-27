@@ -14,18 +14,15 @@ const createWindow = (): void => {
     webPreferences: {
       // ローカルで完結するためtrueにする
       nodeIntegration: true,
+      contextIsolation: false,
     },
   });
   // 読み込む index.html。
   // tsc でコンパイルするので、出力先の dist の相対パスで指定する。
   win.loadFile('./index.html');
 
-  fs.writeFileSync(
-    './dist/bounds.json', JSON.stringify(win.getPosition())
-  );
-
   // 開発者ツールを起動する
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
   win.setPosition(10, 0);
 };
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ChildProcess from 'child_process';
-import fs from 'fs';
 import { ipcRenderer } from 'electron';
 
 /* eslint-disable no-invalid-this */
@@ -24,44 +23,14 @@ class StartButton extends React.Component {
     });
   };
 
-  getWindowPosition = () => {
-    try {
-      const position = JSON.parse(
-        fs.readFileSync('./dist/bounds.json', 'utf8'),
-      );
-      return position;
-    } catch (e) {
-      console.log(e);
-      return null;
-    }
-  };
-
-  // 透明部分の左角の座標取得
-  getCorner = () => {
-    const coordinates = document
-      .getElementById('corner')!
-      .getBoundingClientRect();
-    return {
-      x: coordinates.x,
-      y: coordinates.y + 10,
-    };
-  };
-
   onClickEvent = () => {
-    const position = this.getCorner();
-    const screen = this.getWindowPosition();
-    const window = {
-      x: position.x + screen[0],
-      y: position.y + screen[1],
-    };
     // ウィンドウ操作
     const data = ipcRenderer.invoke('push-start', 'data');
     if (data == null) {
       console.log('error');
     }
     // python を呼び出す
-    const command =
-      'python ./src/python/tsumu.py SCV42 ' + window.x * 2 + ' ' + window.y * 2;
+    const command = 'python ./src/python/tsumu.py SCV42';
     ChildProcess.exec(
       command,
       { maxBuffer: 1024 * 500 },
@@ -122,6 +91,7 @@ class Logging extends React.Component<{ msg: string }> {
 class SetWindowNameBox extends React.Component {
   state = {
     inputValue: '',
+    placeholder: 'input window name',
     styles: {
       left: '20px',
     },
@@ -138,6 +108,7 @@ class SetWindowNameBox extends React.Component {
       <input
         type="text"
         value={this.state.inputValue}
+        placeholder={this.state.placeholder}
         onChange={e => this.handleOnChange(e)}
         style={this.state.styles}
       />
