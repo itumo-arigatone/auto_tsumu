@@ -8,7 +8,7 @@ import { ipcRenderer } from 'electron';
  * スタートボタン情報クラス
  * @return {void}
  */
-class StartButton extends React.Component {
+class StartButton extends React.Component<{ windowName: string }> {
   state = {
     background: '',
   };
@@ -24,13 +24,16 @@ class StartButton extends React.Component {
   };
 
   onClickEvent = () => {
-    // ウィンドウ操作
     const data = ipcRenderer.invoke('push-start', 'data');
     if (data == null) {
       console.log('error');
     }
+    // SetWindowNameBoxから値を取得する
+    console.log(this.props.windowName);
+    const windowName = this.props.windowName;
+
     // python を呼び出す
-    const command = 'python ./src/python/tsumu.py SCV42';
+    const command = 'python ./src/python/tsumu.py ' + windowName;
     ChildProcess.exec(
       command,
       { maxBuffer: 1024 * 500 },
@@ -92,9 +95,6 @@ class SetWindowNameBox extends React.Component {
   state = {
     inputValue: '',
     placeholder: 'input window name',
-    styles: {
-      left: '20px',
-    },
   };
   handleOnChange = (e: any) => {
     this.setState({ inputValue: e.target.value });
@@ -105,17 +105,23 @@ class SetWindowNameBox extends React.Component {
    */
   render() {
     return (
-      <input
-        type="text"
-        value={this.state.inputValue}
-        placeholder={this.state.placeholder}
-        onChange={e => this.handleOnChange(e)}
-        style={this.state.styles}
-      />
+      <div>
+        <input
+          type="text"
+          value={this.state.inputValue}
+          placeholder={this.state.placeholder}
+          onChange={e => this.handleOnChange(e)}
+          className="set_window_name"
+        />
+        <StartButton windowName={this.state.inputValue} />
+      </div>
     );
   }
 }
 
-ReactDOM.render(<StartButton />, document.getElementById('startButton'));
-ReactDOM.render(<Logging msg={'aa'} />, document.getElementById('messageArea'));
 ReactDOM.render(<SetWindowNameBox />, document.getElementById('findWindow'));
+ReactDOM.render(
+  <StartButton windowName="" />,
+  document.getElementById('startButton'),
+);
+ReactDOM.render(<Logging msg={'aa'} />, document.getElementById('messageArea'));

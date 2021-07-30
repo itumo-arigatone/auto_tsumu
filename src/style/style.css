@@ -13,6 +13,12 @@ body{
   margin: auto;
   position: absolute;
 }
+
+.set_window_name{
+  margin: 0 auto;
+  position: absolute
+}
+
 #messageArea{
   background-color: #000000;
   color: #ff0000;
