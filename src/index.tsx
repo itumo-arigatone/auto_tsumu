@@ -10,7 +10,10 @@ import { ipcRenderer } from 'electron';
  */
 class StartButton extends React.Component<{ windowName: string }> {
   state = {
-    background: '',
+    style: {
+      background: '',
+    },
+    logging: '',
   };
   leave = () => {
     this.setState({
@@ -41,14 +44,20 @@ class StartButton extends React.Component<{ windowName: string }> {
         if (error != null) {
           ipcRenderer.invoke('pyEnd', error + '');
           // TODO 画面に書き込む処理
-          <Logging msg={error + ''} />;
+          // <Logging msg={error + ''} />;
           console.log(error);
           console.log('error');
+          this.setState({
+            logging: 'error',
+          });
         } else {
           ipcRenderer.invoke('pyEnd', 'data');
-          <Logging msg={stdout + ''} />;
+          // <Logging msg={stdout + ''} />;
           console.log(stdout);
           console.log('stdout');
+          this.setState({
+            logging: 'stdout',
+          });
         }
       },
     );
@@ -60,14 +69,17 @@ class StartButton extends React.Component<{ windowName: string }> {
    */
   render() {
     return (
-      <span
-        className="button"
-        onMouseEnter={this.enter}
-        onMouseLeave={this.leave}
-        onClick={this.onClickEvent}
-        style={this.state}>
-        start
-      </span>
+      <>
+        <span
+          className="button"
+          onMouseEnter={this.enter}
+          onMouseLeave={this.leave}
+          onClick={this.onClickEvent}
+          style={this.state.style}>
+          start
+        </span>
+        <Logging msg={this.state.logging} />
+      </>
     );
   }
 }
@@ -120,8 +132,8 @@ class SetWindowNameBox extends React.Component {
 }
 
 ReactDOM.render(<SetWindowNameBox />, document.getElementById('findWindow'));
-ReactDOM.render(
+/* ReactDOM.render(
   <StartButton windowName="" />,
   document.getElementById('startButton'),
-);
-ReactDOM.render(<Logging msg={'aa'} />, document.getElementById('messageArea'));
+); 
+ReactDOM.render(<Logging msg={'aa'} />, document.getElementById('messageArea')); */
