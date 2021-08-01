@@ -21,9 +21,15 @@ body{
 
 #messageArea{
   background-color: #000000;
-  color: #ff0000;
-  width: 200px;
-  height: 400px;
+  width: 300px;
+  height: 150px;
   position: absolute;
-  margin: 45px 0 0 45px;
+  bottom: 20px
+}
+
+.message{
+  color: #ff0000;
+  width: 300px;
+  height: 150px;
+  padding: 20px
 }

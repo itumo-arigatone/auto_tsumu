@@ -43,20 +43,13 @@ class StartButton extends React.Component<{ windowName: string }> {
       (error, stdout, stderr) => {
         if (error != null) {
           ipcRenderer.invoke('pyEnd', error + '');
-          // TODO 画面に書き込む処理
-          // <Logging msg={error + ''} />;
-          console.log(error);
-          console.log('error');
           this.setState({
-            logging: 'error',
+            logging: 'error:' + error,
           });
         } else {
           ipcRenderer.invoke('pyEnd', 'data');
-          // <Logging msg={stdout + ''} />;
-          console.log(stdout);
-          console.log('stdout');
           this.setState({
-            logging: 'stdout',
+            logging: 'info:' + stdout,
           });
         }
       },
@@ -94,7 +87,11 @@ class Logging extends React.Component<{ msg: string }> {
    * @return {any} button tag
    */
   render() {
-    return this.props.msg;
+    return (
+      <div id="messageArea">
+        <div className="message">{this.props.msg}</div>
+      </div>
+    );
   }
 }
 
@@ -132,8 +129,3 @@ class SetWindowNameBox extends React.Component {
 }
 
 ReactDOM.render(<SetWindowNameBox />, document.getElementById('findWindow'));
-/* ReactDOM.render(
-  <StartButton windowName="" />,
-  document.getElementById('startButton'),
-); 
-ReactDOM.render(<Logging msg={'aa'} />, document.getElementById('messageArea')); */
