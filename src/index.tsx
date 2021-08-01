@@ -11,18 +11,27 @@ import { ipcRenderer } from 'electron';
 class StartButton extends React.Component<{ windowName: string }> {
   state = {
     style: {
-      background: '',
+      width: '',
+      height: '',
+      top: '',
     },
     logging: '',
   };
   leave = () => {
     this.setState({
-      background: '#00ff00',
+      style: {
+        width: 100,
+        height: 60,
+      },
     });
   };
   enter = () => {
     this.setState({
-      background: '#00ffff',
+      style: {
+        width: 115,
+        height: 69,
+        top: 45,
+      },
     });
   };
 
