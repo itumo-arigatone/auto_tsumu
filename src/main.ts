@@ -1,5 +1,4 @@
-import {app, BrowserWindow, ipcMain} from 'electron';
-import fs from 'fs';
+import {app, Menu, BrowserWindow, ipcMain} from 'electron';
 
 // セキュアな Electron の構成
 // 参考: https://qiita.com/pochman/items/64b34e9827866664d436
@@ -7,8 +6,8 @@ let win:any
 const createWindow = (): void => {
   // レンダープロセスとなる、ウィンドウオブジェクトを作成する。
   win = new BrowserWindow({
-    width: 900,
-    height: 500,
+    width: 360,
+    height: 365,
     frame: true,
     resizable: true,
     webPreferences: {
@@ -22,9 +21,12 @@ const createWindow = (): void => {
   win.loadFile('./index.html');
 
   // 開発者ツールを起動する
-  win.webContents.openDevTools();
-  win.setPosition(10, 0);
+  // win.webContents.openDevTools();
+  win.setPosition(50, 50);
 };
+
+// メニューバー設定
+menubarSetting();
 
 // Electronの起動準備が終わったら、ウィンドウを作成する。
 app.whenReady().then(createWindow);
@@ -62,3 +64,26 @@ ipcMain.handle('logger', (event, str) => {
   console.log(str);
   return;
 })
+
+// メニューバーの設定
+function menubarSetting(): void {
+  const template = [
+
+    {
+      label: '識別設定',
+      submenu: [
+        {
+          label: 'ツム発見設定',
+          click() {}
+        },
+        {
+          label: 'ファン設定',
+          click() {}
+        },
+      ],
+    },
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+  

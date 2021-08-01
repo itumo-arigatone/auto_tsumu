@@ -64,7 +64,7 @@ class StartButton extends React.Component<{ windowName: string }> {
     return (
       <>
         <span
-          className="button"
+          className="button clearText"
           onMouseEnter={this.enter}
           onMouseLeave={this.leave}
           onClick={this.onClickEvent}
