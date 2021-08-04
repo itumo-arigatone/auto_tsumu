@@ -6,8 +6,8 @@ let win:any
 const createWindow = (): void => {
   // レンダープロセスとなる、ウィンドウオブジェクトを作成する。
   win = new BrowserWindow({
-    width: 360,
-    height: 365,
+    width: 370,
+    height: 380,
     frame: true,
     resizable: true,
     webPreferences: {
@@ -21,7 +21,7 @@ const createWindow = (): void => {
   win.loadFile('./index.html');
 
   // 開発者ツールを起動する
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
   win.setPosition(50, 50);
 };
 
