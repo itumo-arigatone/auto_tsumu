@@ -22,18 +22,14 @@ pip install wheel
 pip install pyautogui
 ```
 
-## install pywinauto
-1. Open cmd
-2. Execute below command ↓
-```sh
-pip install pywinauto
-```
-
 ## build
 electron application build command
 ```sh
-npm run build
+npm run build:render
+npm run build:main
 ```
+render is move webpack command
+main is move tsc command
 
 ## install Vysor
 https://www.vysor.io/
@@ -42,4 +38,5 @@ https://www.vysor.io/
 ```sh
 npm start
 ```
-hover the vyser window corner on blue mark.
+1. enter the name of the window in the textbox.
+2. click the start button.
