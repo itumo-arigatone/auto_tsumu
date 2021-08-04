@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ChildProcess from 'child_process';
-import fs from 'fs';
 import { ipcRenderer } from 'electron';
 
 /* eslint-disable no-invalid-this */
@@ -9,74 +8,59 @@ import { ipcRenderer } from 'electron';
  * スタートボタン情報クラス
  * @return {void}
  */
-class StartButton extends React.Component {
+class StartButton extends React.Component<{ windowName: string }> {
   state = {
-    background: '',
+    style: {
+      width: '',
+      height: '',
+      margin: '',
+    },
+    logging: '',
   };
   leave = () => {
     this.setState({
-      background: '#00ff00',
+      style: {
+        width: 100,
+        height: 60,
+      },
     });
   };
   enter = () => {
     this.setState({
-      background: '#00ffff',
+      style: {
+        width: 115,
+        height: 69,
+        margin: 'auto',
+        marginTop: 15,
+      },
     });
   };
 
-  getWindowPosition = () => {
-    try {
-      const position = JSON.parse(
-        fs.readFileSync('./dist/bounds.json', 'utf8'),
-      );
-      return position;
-    } catch (e) {
-      console.log(e);
-      return null;
-    }
-  };
-
-  // 透明部分の左角の座標取得
-  getCorner = () => {
-    const coordinates = document
-      .getElementById('corner')!
-      .getBoundingClientRect();
-    return {
-      x: coordinates.x,
-      y: coordinates.y + 10,
-    };
-  };
-
   onClickEvent = () => {
-    const position = this.getCorner();
-    const screen = this.getWindowPosition();
-    const window = {
-      x: position.x + screen[0],
-      y: position.y + screen[1],
-    };
-    // ウィンドウ操作
     const data = ipcRenderer.invoke('push-start', 'data');
     if (data == null) {
       console.log('error');
     }
+    // SetWindowNameBoxから値を取得する
+    console.log(this.props.windowName);
+    const windowName = this.props.windowName;
+
     // python を呼び出す
-    const command =
-      'python ./src/python/tsumu.py SCV42 ' + window.x * 2 + ' ' + window.y * 2;
+    const command = 'python ./src/python/tsumu.py ' + windowName;
     ChildProcess.exec(
       command,
       { maxBuffer: 1024 * 500 },
       (error, stdout, stderr) => {
         if (error != null) {
           ipcRenderer.invoke('pyEnd', error + '');
-          // TODO 画面に書き込む処理
-          <Logging msg={error + ''} />;
-          console.log(error);
-          console.log('error');
+          this.setState({
+            logging: 'error:' + error,
+          });
         } else {
           ipcRenderer.invoke('pyEnd', 'data');
-          <Logging msg={stdout + ''} />;
-          console.log(stdout);
-          console.log('stdout');
+          this.setState({
+            logging: 'info:' + stdout,
+          });
         }
       },
     );
@@ -88,14 +72,19 @@ class StartButton extends React.Component {
    */
   render() {
     return (
-      <span
-        className="button"
-        onMouseEnter={this.enter}
-        onMouseLeave={this.leave}
-        onClick={this.onClickEvent}
-        style={this.state}>
-        start
-      </span>
+      <>
+        <div id="button_out">
+          <span
+            className="button clearText"
+            onMouseEnter={this.enter}
+            onMouseLeave={this.leave}
+            onClick={this.onClickEvent}
+            style={this.state.style}>
+            start
+          </span>
+        </div>
+        <Logging msg={this.state.logging} />
+      </>
     );
   }
 }
@@ -110,7 +99,11 @@ class Logging extends React.Component<{ msg: string }> {
    * @return {any} button tag
    */
   render() {
-    return this.props.msg;
+    return (
+      <div id="message_area">
+        <div className="message">{this.props.msg}</div>
+      </div>
+    );
   }
 }
 
@@ -122,9 +115,7 @@ class Logging extends React.Component<{ msg: string }> {
 class SetWindowNameBox extends React.Component {
   state = {
     inputValue: '',
-    styles: {
-      left: '20px',
-    },
+    placeholder: 'input window name',
   };
   handleOnChange = (e: any) => {
     this.setState({ inputValue: e.target.value });
@@ -135,16 +126,20 @@ class SetWindowNameBox extends React.Component {
    */
   render() {
     return (
-      <input
-        type="text"
-        value={this.state.inputValue}
-        onChange={e => this.handleOnChange(e)}
-        style={this.state.styles}
-      />
+      <div id="out_window">
+        <div id="box_out">
+          <input
+            type="text"
+            value={this.state.inputValue}
+            placeholder={this.state.placeholder}
+            onChange={e => this.handleOnChange(e)}
+            className="set_window_name"
+          />
+        </div>
+        <StartButton windowName={this.state.inputValue} />
+      </div>
     );
   }
 }
 
-ReactDOM.render(<StartButton />, document.getElementById('startButton'));
-ReactDOM.render(<Logging msg={'aa'} />, document.getElementById('messageArea'));
 ReactDOM.render(<SetWindowNameBox />, document.getElementById('findWindow'));

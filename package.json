@@ -1,5 +1,5 @@
 {
-  "name": "centerglassapp",
+  "name": "auto_tsumu",
   "version": "1.0.0",
   "description": "Create a Windows application with a transparent center.",
   "main": "./dist/main.js",
@@ -19,16 +19,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/unkomorasi01/centerGlassApp.git"
+    "url": "git+https://github.com/unkomorasi01/auto_tsumu.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/unkomorasi01/centerGlassApp/issues"
+    "url": "https://github.com/unkomorasi01/auto_tsumu/issues"
   },
-  "homepage": "https://github.com/unkomorasi01/centerGlassApp#readme",
+  "homepage": "https://github.com/unkomorasi01/auto_tsumu#readme",
   "dependencies": {
-    "child_process": "^1.0.2",
     "eslint-loader": "^4.0.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"

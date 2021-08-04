@@ -1,65 +1,101 @@
 body{
     -webkit-app-region: drag;
-    background: rgba(0, 0, 0, 0);
-}
-#top{
-  -webkit-app-region: drag;
-  background-color: #ffe9e9;
-  width: 100%;
-  height: 80px;
-  top: 0px;
-  left: 0px;
-  position: absolute;
-}
-#left{
-  background-color: #ffffff;
-  width:250px;
-  height: 800px;
-  left: 0px;
-  top: 40px;
-  position: absolute;
-}
-#right{
-  background-color: #ffffff;
-  width:250px;
-  height: 800px;
-  right: 0px;
-  top:40px;
-  position: absolute;
-}
-#bottom{
-  background-color: #ffffff;
-  width: 100%;
-  height: 80px;
-  bottom: 0px;
-  left: 0px;
-  position: absolute;
+    background-image: url("./images/wallpaper.png");
+    background-size: cover;
 }
 .button{
-  background: #ff00ff;
+  background-image: url("./images/start_button.png");
+  background-size: contain;
   width: 100px;
   height: 60px;
-  top: 0;
   right: 0;
-  bottom: 0;
   left: 0;
+  position: absolute;
+  margin: 20px auto;
+}
+
+#button_out{
+  width: 340px;
+  height: 100px;
+  top: 50px;
   margin: auto;
   position: absolute;
 }
-#corner{
-  width: 10px;
-  height: 10px;
-  left: 250px;
-  bottom: 0px;
-  margin: 0;
-  background-color: aqua;
+
+.set_window_name{
+  text-align: center;
+  background-color: rgba(0,0,0,0);
+  color: #ffffff;
+  border-width: 0px;
+  outline: none;
+  right: 0;
+  left: 0;
+  margin: 20px auto;
   position: absolute;
 }
-#messageArea{
-  background-color: #000000;
-  color: #ff0000;
-  width: 200px;
-  height: 400px;
+
+#box_out{
+  width: 340px;
+  height: 20px;
+  margin: auto;
   position: absolute;
-  margin: 45px 0 0 45px;
+}
+
+::placeholder{
+  color: #60e2ff
+}
+
+#message_area{
+  background-color: #00000000;
+  width: 340px;
+  height: 150px;
+  position: absolute;
+  top: 140px;
+  right: 0;
+  left: 0;
+  margin: auto;
+}
+
+#out_window {
+  background-image: url("./images/window.png");
+  width: 340px;
+  height: 290px;
+  margin: auto;
+}
+
+.message{
+  color: #ff0000;
+  width: 300px;
+  height: 150px;
+  overflow:scroll;
+  margin: auto;
+}
+
+.clearText{
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/*スクロールバー全体*/
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/*スクロールバーの軌道*/
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+}
+
+/*スクロールバーの動く部分*/
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 50, .5);
+  border-radius: 10px;
+  box-shadow:0 0 0 1px rgba(255, 255, 255, .3);
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
 }
