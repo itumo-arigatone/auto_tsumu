@@ -157,8 +157,8 @@ def makeRoute(startNode, group, result):
     return makeRoute(start, gr, result)
 
 def tapFan():
-    pyautogui.mouseDown(window_position[0] + 550, window_position[1] + 1300, button='left')
-    pyautogui.mouseUp(window_position[0] + 550, window_position[1] + 1300, button='left')
+    pyautogui.mouseDown(window_position[0] + 400, window_position[1] + 855, button='left')
+    pyautogui.mouseUp(window_position[0] + 400, window_position[1] + 855, button='left')
     logging.debug('debug %s', 'tapFan')
 
 def connectTsumu(array):
