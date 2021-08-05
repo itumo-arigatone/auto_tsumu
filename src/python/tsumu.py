@@ -293,16 +293,14 @@ def main():
                 color_group.append(findNearPlaceTsumu(i))
 
             # 1つの配列にまとめる
-            all_groups = sum(color_group, [])
+            all_groups = getUniqueList(sum(color_group, []))
 
             # 繋げるツムの選択
-            use_group = []
             connected = False
             # 最大から3つになるまで取得
             for i in range(len(all_groups)):
                 maxLength = max(len(v) for v in all_groups)
                 if maxLength > 2:
-                    use_group.append(all_groups[[len(v) for v in all_groups].index(maxLength)])
                     array = findRoute(
                         getUniqueList(all_groups[[len(v) for v in all_groups].index(maxLength)])
                     )

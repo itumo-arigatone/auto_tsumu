@@ -4,7 +4,7 @@ import math
 import pyautogui
 import sys
 
-img_path = "./img/window.png"
+img_path = "./img/sample.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
 
@@ -42,7 +42,7 @@ def findNearPlaceTsumu(group):
                 for k in gr:
                     x = (int(i["center_x"]) - int(k["center_x"])) ** 2
                     y = (int(i["center_y"]) - int(k["center_y"])) ** 2
-                    if 0 < math.sqrt(x+y) <= 80:
+                    if 0 < math.sqrt(x+y) <= 100:
                         near.append(k)
                         color_group.append(k)
                 if len(near) == 0:
@@ -57,7 +57,7 @@ def findNearPlaceTsumu(group):
                             break
                         x = (int(j["center_x"]) - int(k["center_x"])) ** 2
                         y = (int(j["center_y"]) - int(k["center_y"])) ** 2
-                        if 0 < math.sqrt(x+y) <= 80:
+                        if 0 < math.sqrt(x+y) <= 100:
                             # 新たなnearができる
                             new_near.append(k)
                             color_group.append(k)
@@ -85,7 +85,7 @@ def getStartNode(group):
         for j in group:
             x = (int(i["center_x"]) - int(j["center_x"])) ** 2
             y = (int(i["center_y"]) - int(j["center_y"])) ** 2
-            if 0 < math.sqrt(x+y) <= 80:
+            if 0 < math.sqrt(x+y) <= 100:
                 node += 1
         if node == 1:
             return i
@@ -98,7 +98,7 @@ def makeRoute(startNode, group, result):
     for i in gr:
         x = (int(start["center_x"]) - int(i["center_x"])) ** 2
         y = (int(start["center_y"]) - int(i["center_y"])) ** 2
-        if 0 < math.sqrt(x+y) <= 80:
+        if 0 < math.sqrt(x+y) <= 100:
             result.append(i)
             start = i
             gr.remove(i)
@@ -112,23 +112,6 @@ def makeRoute(startNode, group, result):
 def tapFan():
     pyautogui.mouseDown(window_position[0] + 612, window_position[1] + 1316, button='left')
     pyautogui.mouseUp(window_position[0] + 612, window_position[1] + 1316, button='left')
-
-def connectTsumu(array):
-    # ここからPCのカーソルを操作する
-    # 中心点を繋ぐ処理
-    first = True
-    index = 0
-    for i in array:
-        # 移動
-        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]))
-        if first:
-            # スタート地点からクリックする
-            pyautogui.mouseDown(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
-            first = False
-        index += 1
-        if index == len(array):
-            # クリックを解除
-            pyautogui.mouseUp(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
 
 def gamma_correction(img, gamma):
     # テーブルを作成する。
@@ -203,7 +186,8 @@ def main():
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-        crop = ancestor[i[1]-5:i[1]+5, i[0]-5:i[0]+5]
+        crop = ancestor[i[1]-10:i[1]+10, i[0]-10:i[0]+10]
+        # crop = ancestor[i[1]-i[2]:i[1]+i[2], i[0]-i[2]:i[0]+i[2]]
 
         hsv_color = hsv_decision(crop)
 
@@ -218,7 +202,7 @@ def main():
         cv2.circle(
             color_img,
             (k["center_x"], k["center_y"]),
-            25,
+            15,
             (k["color"]["h"], k["color"]["s"], k["color"]["v"]),
             -1
         )
@@ -230,6 +214,8 @@ def main():
             "v": k["color"]["v"]
             }
         )
+        # 色情報の取得用デバッグ
+        cv2.putText(ancestor, str(k["color"]["h"]), (k["center_x"], k["center_y"]), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
 
     color_list = getUniqueList(all_list)
 
@@ -238,7 +224,7 @@ def main():
     for i in color_list:
         sub = []
         for j in cercle_info:
-            if i["h"] == j["color"]["h"] and i["s"] == j["color"]["s"]:
+            if i["h"] == j["color"]["h"]:# and i["s"] == j["color"]["s"]:
                 sub.append(j)
         
         if len(sub) >= 3:
@@ -248,7 +234,8 @@ def main():
         # 近くのツムを見つけてグループ化
         color_group.append(findNearPlaceTsumu(i))
     # 1つの配列にまとめる
-    all_groups = sum(color_group, [])
+    alls_groups = sum(color_group, [])
+    all_groups = getUniqueList(alls_groups)
 
     # 繋げるツムの選択
     use_group = []
@@ -256,16 +243,18 @@ def main():
     for i in range(len(all_groups)):
         maxLength = max(len(v) for v in all_groups)
         if maxLength > 2:
-            all_groups[[len(v) for v in all_groups].index(maxLength)]
             use_group.append(all_groups[[len(v) for v in all_groups].index(maxLength)])
             # 大きい物から削除していく
             all_groups.remove(all_groups[[len(v) for v in all_groups].index(maxLength)])
 
-    print(len(use_group))
 
     # ルート検索,なぞる順に配列を作る
     for i in use_group:
-        array = findRoute(getUniqueList(i))
+        uniqueArray = getUniqueList(i)
+        if len(uniqueArray) < 3:
+            continue
+
+        array = findRoute(uniqueArray)
         if len(array) < 3:
             continue
         k = 0
@@ -273,9 +262,10 @@ def main():
             k += 1
             cv2.putText(color_img, str(k), (j["center_x"]-10, j["center_y"]-15), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
 
-    for i in use_group:
-        for j in i:
-            cv2.putText(color_img, str(j["color"]["h"]), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
+    # 色の数値化Debug
+    # for i in cercle_info:
+    #    for j in i:
+    #         cv2.putText(color_img, str(j["color"]["h"]), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
 
     ############# Debug
     cv2.imshow('color', color_img)
