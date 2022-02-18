@@ -6,15 +6,21 @@
   "scripts": {
     "start": "electron ./dist/main.js",
     "build:main": "tsc",
-    "build:render": "webpack"
+    "build:render": "webpack",
+    "package:windows": "webpack && electron-builder --win --x64"
   },
   "build": {
     "appId": "com.unkomorasi01.auto_tsumu",
     "productName": "autoTsumu",
     "extends": null,
+    "directories": {
+      "output": "./product"
+    },
     "files": [
-      "./build/**/*",
-      "./dist/main.js"
+      "./dist/**/*.js",
+      "./index.html",
+      "./main.js",
+      "./icon/**/*"
     ]
   },
   "repository": {
