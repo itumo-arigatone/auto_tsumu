@@ -38,6 +38,15 @@ module.exports = {
         // TypeScript をコンパイルする
         use: 'ts-loader',
       },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        // ローダーの指定
+        // TypeScript をコンパイルする
+        loader: 'file-loader',
+        options: {
+          name: 'src/style/images/[name].[ext]'
+        }
+      },
     ],
   },
   // 処理対象のファイルを記載する

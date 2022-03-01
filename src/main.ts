@@ -21,7 +21,7 @@ const createWindow = (): void => {
   win.loadFile('./index.html');
 
   // 開発者ツールを起動する
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
   win.setPosition(50, 50);
 };
 

@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ChildProcess from 'child_process';
 import { ipcRenderer } from 'electron';
+import CSS from 'csstype';
+import StartButtonImg from './style/images/start_button.png';
 
 /* eslint-disable no-invalid-this */
 /**
@@ -71,6 +73,16 @@ class StartButton extends React.Component<{ windowName: string }> {
    * @return {any} button tag
    */
   render() {
+    const buttonStyle: CSS.Properties = {
+      backgroundImage: `url(${StartButtonImg})`,
+      backgroundSize: 'contain',
+      width: '100px',
+      height: '60px',
+      right: '0',
+      left: '0',
+      position: 'absolute',
+      margin: '20px auto',
+    };
     return (
       <>
         <div id="button_out">
@@ -79,7 +91,7 @@ class StartButton extends React.Component<{ windowName: string }> {
             onMouseEnter={this.enter}
             onMouseLeave={this.leave}
             onClick={this.onClickEvent}
-            style={this.state.style}>
+            style={Object.assign({}, this.state.style, buttonStyle)}>
             start
           </span>
         </div>
@@ -125,6 +137,17 @@ class SetWindowNameBox extends React.Component {
    * @return {any} input tag
    */
   render() {
+    const setWindowNameStyle: CSS.Properties = {
+      textAlign: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      color: '#ffffff',
+      borderWidth: '0px',
+      outline: 'none',
+      right: 0,
+      left: 0,
+      margin: '20px auto',
+      position: 'absolute',
+    };
     return (
       <div id="out_window">
         <div id="box_out">
@@ -134,6 +157,7 @@ class SetWindowNameBox extends React.Component {
             placeholder={this.state.placeholder}
             onChange={e => this.handleOnChange(e)}
             className="set_window_name"
+            style={setWindowNameStyle}
           />
         </div>
         <StartButton windowName={this.state.inputValue} />
