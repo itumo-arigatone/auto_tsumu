@@ -4,12 +4,18 @@ import ChildProcess from 'child_process';
 import { ipcRenderer } from 'electron';
 import CSS from 'csstype';
 import StartButtonImg from './style/images/start_button.png';
+import backgroudImg from './style/images/wallpaper.png';
+import WindowImg from './style/images/window.png';
 
 const clearTextStyleconst: CSS.Properties = {
   textIndent: '100%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
 };
+
+document.body.style.backgroundImage = `url(${backgroudImg})`;
+// document.body.style.webkitAppRegion = "drag";
+document.body.style.backgroundSize = 'cover';
 /* eslint-disable no-invalid-this */
 /**
  * スタートボタン情報クラス
@@ -79,6 +85,13 @@ class StartButton extends React.Component<{ windowName: string }> {
    * @return {any} button tag
    */
   render() {
+    const buttonOutStyle: CSS.Properties = {
+      width: '340px',
+      height: '100px',
+      top: '50px',
+      margin: 'auto',
+      position: 'absolute',
+    };
     const buttonStyle: CSS.Properties = {
       backgroundImage: `url(${StartButtonImg})`,
       backgroundSize: 'contain',
@@ -88,7 +101,7 @@ class StartButton extends React.Component<{ windowName: string }> {
     };
     return (
       <>
-        <div id="button_out">
+        <div id="button_out" style={buttonOutStyle}>
           <span
             className="button clearText"
             onMouseEnter={this.enter}
@@ -119,9 +132,28 @@ class Logging extends React.Component<{ msg: string }> {
    * @return {any} button tag
    */
   render() {
+    const messageAreaStyle: CSS.Properties = {
+      backgroundColor: '#00000000',
+      width: '340px',
+      height: '150px',
+      position: 'absolute',
+      top: '140px',
+      right: '0',
+      left: '0',
+      margin: 'auto',
+    };
+    const messageStyle: CSS.Properties = {
+      color: '#ff0000',
+      width: '300px',
+      height: '150px',
+      overflow: 'scroll',
+      margin: 'auto',
+    };
     return (
-      <div id="message_area">
-        <div className="message">{this.props.msg}</div>
+      <div id="message_area" style={messageAreaStyle}>
+        <div className="message" style={messageStyle}>
+          {this.props.msg}
+        </div>
       </div>
     );
   }
@@ -145,6 +177,12 @@ class SetWindowNameBox extends React.Component {
    * @return {any} input tag
    */
   render() {
+    const outWindowStyle: CSS.Properties = {
+      backgroundImage: `url(${WindowImg})`,
+      width: '340px',
+      height: '290px',
+      margin: 'auto',
+    };
     const setWindowNameStyle: CSS.Properties = {
       textAlign: 'center',
       backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -156,9 +194,15 @@ class SetWindowNameBox extends React.Component {
       margin: '20px auto',
       position: 'absolute',
     };
+    const boxOutStyle: CSS.Properties = {
+      width: '340px',
+      height: '20px',
+      margin: 'auto',
+      position: 'absolute',
+    };
     return (
-      <div id="out_window">
-        <div id="box_out">
+      <div id="out_window" style={outWindowStyle}>
+        <div id="box_out" style={boxOutStyle}>
           <input
             type="text"
             value={this.state.inputValue}
