@@ -5,6 +5,11 @@ import { ipcRenderer } from 'electron';
 import CSS from 'csstype';
 import StartButtonImg from './style/images/start_button.png';
 
+const clearTextStyleconst: CSS.Properties = {
+  textIndent: '100%',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+};
 /* eslint-disable no-invalid-this */
 /**
  * スタートボタン情報クラス
@@ -13,9 +18,9 @@ import StartButtonImg from './style/images/start_button.png';
 class StartButton extends React.Component<{ windowName: string }> {
   state = {
     style: {
-      width: '',
-      height: '',
-      margin: '',
+      width: '100px',
+      height: '60px',
+      margin: '20px auto',
     },
     logging: '',
   };
@@ -24,6 +29,7 @@ class StartButton extends React.Component<{ windowName: string }> {
       style: {
         width: 100,
         height: 60,
+        margin: '20px auto',
       },
     });
   };
@@ -76,12 +82,9 @@ class StartButton extends React.Component<{ windowName: string }> {
     const buttonStyle: CSS.Properties = {
       backgroundImage: `url(${StartButtonImg})`,
       backgroundSize: 'contain',
-      width: '100px',
-      height: '60px',
       right: '0',
       left: '0',
       position: 'absolute',
-      margin: '20px auto',
     };
     return (
       <>
@@ -91,7 +94,12 @@ class StartButton extends React.Component<{ windowName: string }> {
             onMouseEnter={this.enter}
             onMouseLeave={this.leave}
             onClick={this.onClickEvent}
-            style={Object.assign({}, this.state.style, buttonStyle)}>
+            style={Object.assign(
+              {},
+              clearTextStyleconst,
+              buttonStyle,
+              this.state.style,
+            )}>
             start
           </span>
         </div>
