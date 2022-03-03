@@ -12,15 +12,18 @@
   "build": {
     "appId": "com.unkomorasi01.auto_tsumu",
     "productName": "autoTsumu",
-    "extends": null,
     "directories": {
       "output": "./product"
     },
+    "extraMetadata": {
+      "main": "./dist/main.js"
+    },
     "files": [
       "./dist/**/*.js",
-      "./index.html",
-      "./main.js",
-      "./icon/**/*"
+      "./dist/**/*.html",
+      "./icon/**/*",
+      "./dist/style/**/*.png",
+      "./**/*.py"
     ]
   },
   "repository": {

@@ -39,12 +39,11 @@ module.exports = {
         use: 'ts-loader',
       },
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(png|jpe?g|gif|py)$/i,
         // ローダーの指定
-        // TypeScript をコンパイルする
         loader: 'file-loader',
         options: {
-          name: 'src/style/images/[name].[ext]'
+          name: 'style/images/[name].[ext]'
         }
       },
     ],

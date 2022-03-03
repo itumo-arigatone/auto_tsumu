@@ -18,11 +18,24 @@ const createWindow = (): void => {
   });
   // 読み込む index.html。
   // tsc でコンパイルするので、出力先の dist の相対パスで指定する。
-  win.loadFile('./index.html');
+  const path = require('path');
+  win.loadFile(path.join(__dirname, './index.html'));
+  // win.loadFile('./index.html');
+
+  // 起動オプションに、 "--debug"があれば開発者ツールを起動する
+  if (process.argv.find((arg) => arg === '--debug')) {
+    win.webContents.openDevTools()
+  }
 
   // 開発者ツールを起動する
   win.webContents.openDevTools();
   win.setPosition(50, 50);
+
+  // ブラウザウィンドウを閉じたときのイベントハンドラ
+  win.on('closed', () => {
+    // 閉じたウィンドウオブジェクトにはアクセスできない
+    win = null
+  })
 };
 
 // メニューバー設定
