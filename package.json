@@ -6,8 +6,8 @@
   "scripts": {
     "start": "electron ./dist/main.js",
     "build:main": "tsc",
-    "build:render": "set NODE_ENV=development && webpack",
-    "package:windows": "set NODE_ENV=production&& webpack && electron-builder --win --x64"
+    "build:render": "webpack",
+    "package:windows": "webpack && electron-builder --win --x64"
   },
   "build": {
     "appId": "com.unkomorasi01.auto_tsumu",
