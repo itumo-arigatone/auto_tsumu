@@ -61,6 +61,7 @@ class StartButton extends React.Component<{ windowName: string }> {
     const windowName = this.props.windowName;
 
     // python を呼び出す
+    console.log(process.env.NODE_ENV);
     const isDevelopment = process.env.NODE_ENV === 'development';
     const pythonPath = isDevelopment
       ? './src/python/tsumu.py'

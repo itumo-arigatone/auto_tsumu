@@ -4,10 +4,10 @@
   "description": "Create a Windows application with a transparent center.",
   "main": "./dist/main.js",
   "scripts": {
-    "start": "set NODE_ENV=development&&electron ./dist/main.js",
+    "start": "electron ./dist/main.js",
     "build:main": "tsc",
-    "build:render": "webpack",
-    "package:windows": "webpack && electron-builder --win --x64"
+    "build:render": "set NODE_ENV=development && webpack",
+    "package:windows": "set NODE_ENV=production&& webpack && electron-builder --win --x64"
   },
   "build": {
     "appId": "com.unkomorasi01.auto_tsumu",

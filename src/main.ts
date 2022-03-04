@@ -28,7 +28,10 @@ const createWindow = (): void => {
   }
 
   // 開発者ツールを起動する
-  win.webContents.openDevTools();
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  if (isDevelopment) {
+    win.webContents.openDevTools();
+  } 
   win.setPosition(50, 50);
 
   // ブラウザウィンドウを閉じたときのイベントハンドラ
