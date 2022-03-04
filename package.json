@@ -4,7 +4,7 @@
   "description": "Create a Windows application with a transparent center.",
   "main": "./dist/main.js",
   "scripts": {
-    "start": "electron ./dist/main.js",
+    "start": "set NODE_ENV=development&&electron ./dist/main.js",
     "build:main": "tsc",
     "build:render": "webpack",
     "package:windows": "webpack && electron-builder --win --x64"
@@ -18,6 +18,9 @@
     "extraMetadata": {
       "main": "./dist/main.js"
     },
+    "extraResources": [
+      "src/python/tsumu.py"
+    ],
     "files": [
       "./dist/**/*.js",
       "./dist/**/*.html",

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import ChildProcess from 'child_process';
 import { ipcRenderer } from 'electron';
 import CSS from 'csstype';
+import Path from 'path';
 import StartButtonImg from './style/images/start_button.png';
 import backgroudImg from './style/images/wallpaper.png';
 import WindowImg from './style/images/window.png';
@@ -60,7 +61,11 @@ class StartButton extends React.Component<{ windowName: string }> {
     const windowName = this.props.windowName;
 
     // python を呼び出す
-    const command = 'python ./src/python/tsumu.py ' + windowName;
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const pythonPath = isDevelopment
+      ? './src/python/tsumu.py'
+      : Path.join(__dirname, '../../src/python/tsumu.py');
+    const command = `python ${pythonPath} ${windowName}`;
     ChildProcess.exec(
       command,
       { maxBuffer: 1024 * 500 },

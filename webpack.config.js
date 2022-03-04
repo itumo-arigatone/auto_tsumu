@@ -39,7 +39,7 @@ module.exports = {
         use: 'ts-loader',
       },
       {
-        test: /\.(png|jpe?g|gif|py)$/i,
+        test: /\.(png|jpe?g|gif)$/i,
         // ローダーの指定
         loader: 'file-loader',
         options: {
