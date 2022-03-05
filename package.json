@@ -7,20 +7,27 @@
     "start": "electron ./dist/main.js",
     "build:main": "tsc",
     "build:render": "webpack",
-    "package:windows": "webpack && electron-builder --win --x64"
+    "package:windows": "node createLogFile.js && webpack && electron-builder --win --x64"
   },
   "build": {
     "appId": "com.unkomorasi01.auto_tsumu",
     "productName": "autoTsumu",
-    "extends": null,
     "directories": {
       "output": "./product"
     },
+    "extraMetadata": {
+      "main": "./dist/main.js"
+    },
+    "extraResources": [
+      "src/python/tsumu.py",
+      "log/logger.log",
+      "img/"
+    ],
     "files": [
       "./dist/**/*.js",
-      "./index.html",
-      "./main.js",
-      "./icon/**/*"
+      "./dist/**/*.html",
+      "./icon/**/*",
+      "./dist/style/**/*.png"
     ]
   },
   "repository": {
@@ -43,6 +50,7 @@
     "@types/react-dom": "^17.0.9",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
+    "copy-webpack-plugin": "^9.1.0",
     "electron": "^13.1.7",
     "electron-builder": "^22.11.7",
     "eslint": "^7.31.0",
@@ -50,6 +58,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
+    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.3.2",
     "prettier": "^2.3.2",
     "ts-loader": "^9.2.3",

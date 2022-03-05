@@ -3,3 +3,4 @@ dist/
 node_modules/
 auto_tsumu
 product
+log/
