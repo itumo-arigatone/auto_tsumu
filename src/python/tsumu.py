@@ -9,8 +9,8 @@ import logging
 import ctypes
 from ctypes.wintypes import HWND, DWORD, RECT
 
-img_path = "./img/window.png"
 args = sys.argv
+img_path = args[2]
 
 def GetWindowRectFromName(TargetWindowTitle):
     TargetWindowHandle = ctypes.windll.user32.FindWindowW(0, TargetWindowTitle)
@@ -25,7 +25,7 @@ window_position = [int(window_information[0]), int(window_information[1])]
 quit_flg = False
 
 # ログレベルを DEBUG に変更
-logging.basicConfig(filename='./dist/logger.log', level=logging.DEBUG)
+logging.basicConfig(filename=args[3], level=logging.DEBUG)
 # logging のみの書き方
 logging.info('info %s', args[1])
 

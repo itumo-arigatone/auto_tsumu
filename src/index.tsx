@@ -63,10 +63,20 @@ class StartButton extends React.Component<{ windowName: string }> {
     // python を呼び出す
     console.log(process.env.NODE_ENV);
     const isDevelopment = process.env.NODE_ENV === 'development';
+    // pyファイルのパスを取得
     const pythonPath = isDevelopment
       ? './src/python/tsumu.py'
       : Path.join(__dirname, '../../src/python/tsumu.py');
-    const command = `python ${pythonPath} ${windowName}`;
+    // 画像格納先パスを取得
+    const imagePath = isDevelopment
+      ? './img/window.png'
+      : Path.join(__dirname, '../../img/window.png');
+    // ログファイル格納先パスを取得
+    const logPath = isDevelopment
+      ? './dist/logger.log'
+      : Path.join(__dirname, '../../log/logger.log');
+    // python処理実行 python {パス} {Vysorウィンドウ名} {画像格納先パス} {logファイルの格納先パス}
+    const command = `python ${pythonPath} ${windowName} ${imagePath} ${logPath}`;
     ChildProcess.exec(
       command,
       { maxBuffer: 1024 * 500 },

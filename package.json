@@ -7,7 +7,7 @@
     "start": "electron ./dist/main.js",
     "build:main": "tsc",
     "build:render": "webpack",
-    "package:windows": "webpack && electron-builder --win --x64"
+    "package:windows": "node createLogFile.js && webpack && electron-builder --win --x64"
   },
   "build": {
     "appId": "com.unkomorasi01.auto_tsumu",
@@ -19,14 +19,15 @@
       "main": "./dist/main.js"
     },
     "extraResources": [
-      "src/python/tsumu.py"
+      "src/python/tsumu.py",
+      "log/logger.log",
+      "img/"
     ],
     "files": [
       "./dist/**/*.js",
       "./dist/**/*.html",
       "./icon/**/*",
-      "./dist/style/**/*.png",
-      "./**/*.py"
+      "./dist/style/**/*.png"
     ]
   },
   "repository": {
