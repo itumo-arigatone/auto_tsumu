@@ -25,7 +25,7 @@ window_position = [int(window_information[0]), int(window_information[1])]
 quit_flg = False
 
 # ログレベルを DEBUG に変更
-logging.basicConfig(filename=args[3], level=logging.DEBUG)
+logging.basicConfig(filename=args[3], level=logging.INFO)
 # logging のみの書き方
 logging.info('info %s', args[1])
 

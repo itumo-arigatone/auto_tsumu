@@ -20,7 +20,6 @@ const createWindow = (): void => {
   // tsc でコンパイルするので、出力先の dist の相対パスで指定する。
   const path = require('path');
   win.loadFile(path.join(__dirname, './index.html'));
-  // win.loadFile('./index.html');
 
   // 開発者ツールを起動する
   // const isDevelopment = process.env.NODE_ENV === 'development';
@@ -78,8 +77,8 @@ ipcMain.handle('logger', (event, str) => {
 
 // メニューバーの設定
 function menubarSetting(): void {
+  let find:any
   const template = [
-
     {
       label: '識別設定',
       submenu: [
@@ -89,7 +88,35 @@ function menubarSetting(): void {
         },
         {
           label: 'ファン設定',
-          click() {}
+          click() {
+            
+            find = new BrowserWindow({
+              frame: false,
+              resizable: false,
+              transparent: true,
+              webPreferences: {
+                // ローカルで完結するためtrueにする
+                nodeIntegration: true,
+                contextIsolation: false,
+              },
+            });
+            find.maximize();
+            const path = require('path');
+            find.loadFile(path.join(__dirname, './settingFun.html'));
+
+            // 開発者ツールを起動する
+            // const isDevelopment = process.env.NODE_ENV === 'development';
+            // if (isDevelopment) {
+            // find.webContents.openDevTools();
+            // }
+            find.setPosition(0, 0);
+
+            // ブラウザウィンドウを閉じたときのイベントハンドラ
+            find.on('closed', () => {
+              // 閉じたウィンドウオブジェクトにはアクセスできない
+              find = null
+            })
+          }
         },
       ],
     },

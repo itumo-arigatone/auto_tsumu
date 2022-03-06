@@ -15,8 +15,6 @@ const clearTextStyleconst: CSS.Properties = {
   overflow: 'hidden',
 };
 
-document.body.style.backgroundImage = `url(${backgroudImg})`;
-document.body.style.backgroundSize = 'cover';
 /* eslint-disable no-invalid-this */
 /**
  * スタートボタン情報クラス
@@ -189,6 +187,8 @@ class SetWindowNameBox extends React.Component {
    * @return {any} input tag
    */
   render() {
+    document.body.style.backgroundImage = `url(${backgroudImg})`;
+    document.body.style.backgroundSize = 'cover';
     const outWindowStyle: CSS.Properties = {
       backgroundImage: `url(${WindowImg})`,
       width: '340px',
