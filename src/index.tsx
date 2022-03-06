@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import ChildProcess from 'child_process';
 import { ipcRenderer } from 'electron';
 import CSS from 'csstype';
+import { Scrollbar } from 'react-scrollbars-custom';
 import Path from 'path';
 import StartButtonImg from './style/images/start_button.png';
 import backgroudImg from './style/images/wallpaper.png';
@@ -15,7 +16,6 @@ const clearTextStyleconst: CSS.Properties = {
 };
 
 document.body.style.backgroundImage = `url(${backgroudImg})`;
-// document.body.style.webkitAppRegion = "drag";
 document.body.style.backgroundSize = 'cover';
 /* eslint-disable no-invalid-this */
 /**
@@ -150,8 +150,8 @@ class Logging extends React.Component<{ msg: string }> {
   render() {
     const messageAreaStyle: CSS.Properties = {
       backgroundColor: '#00000000',
-      width: '340px',
-      height: '150px',
+      width: '320px',
+      height: '145px',
       position: 'absolute',
       top: '140px',
       right: '0',
@@ -160,17 +160,13 @@ class Logging extends React.Component<{ msg: string }> {
     };
     const messageStyle: CSS.Properties = {
       color: '#ff0000',
-      width: '300px',
-      height: '150px',
-      overflow: 'scroll',
-      margin: 'auto',
     };
     return (
-      <div id="message_area" style={messageAreaStyle}>
+      <Scrollbar style={messageAreaStyle}>
         <div className="message" style={messageStyle}>
           {this.props.msg}
         </div>
-      </div>
+      </Scrollbar>
     );
   }
 }

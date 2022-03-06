@@ -22,16 +22,11 @@ const createWindow = (): void => {
   win.loadFile(path.join(__dirname, './index.html'));
   // win.loadFile('./index.html');
 
-  // 起動オプションに、 "--debug"があれば開発者ツールを起動する
-  if (process.argv.find((arg) => arg === '--debug')) {
-    win.webContents.openDevTools()
-  }
-
   // 開発者ツールを起動する
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  if (isDevelopment) {
-    win.webContents.openDevTools();
-  } 
+  // const isDevelopment = process.env.NODE_ENV === 'development';
+  // if (isDevelopment) {
+  //  win.webContents.openDevTools();
+  // } 
   win.setPosition(50, 50);
 
   // ブラウザウィンドウを閉じたときのイベントハンドラ
