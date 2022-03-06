@@ -8,15 +8,10 @@ from concurrent import futures
 import logging
 import ctypes
 from ctypes.wintypes import HWND, DWORD, RECT
+from getWindow import GetWindowRectFromName
 
 args = sys.argv
 img_path = args[2]
-
-def GetWindowRectFromName(TargetWindowTitle):
-    TargetWindowHandle = ctypes.windll.user32.FindWindowW(0, TargetWindowTitle)
-    Rectangle = ctypes.wintypes.RECT()
-    ctypes.windll.user32.GetWindowRect(TargetWindowHandle, ctypes.pointer(Rectangle))
-    return (Rectangle.left, Rectangle.top, Rectangle.right, Rectangle.bottom)
 
 # windowの左上角の座標を取得する
 window_information = GetWindowRectFromName(args[1])

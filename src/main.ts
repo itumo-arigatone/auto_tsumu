@@ -75,6 +75,16 @@ ipcMain.handle('logger', (event, str) => {
   return;
 })
 
+let windowName = "";
+ipcMain.handle('set-fun', (event, str) => {
+  windowName = str;
+  return;
+})
+ipcMain.handle('get-fun', (event, str) => {
+  console.log(windowName);
+  return windowName;
+})
+
 // メニューバーの設定
 function menubarSetting(): void {
   let find:any
@@ -107,7 +117,7 @@ function menubarSetting(): void {
             // 開発者ツールを起動する
             // const isDevelopment = process.env.NODE_ENV === 'development';
             // if (isDevelopment) {
-            // find.webContents.openDevTools();
+            find.webContents.openDevTools();
             // }
             find.setPosition(0, 0);
 

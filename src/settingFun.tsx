@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ChildProcess from 'child_process';
+import { ipcRenderer } from 'electron';
+import Path from 'path';
 import CSS from 'csstype';
 
 /**
@@ -8,6 +10,35 @@ import CSS from 'csstype';
  * @return {void}
  */
 class SetFunPosition extends React.Component {
+  /**
+   * レンダー
+   * @param {any} event
+   * @return {void}
+   */
+  onClickEvent = (event: any) => {
+    const windowName = ipcRenderer.invoke('get-fun', '');
+    console.log(windowName);
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const pythonPath = isDevelopment
+      ? './src/python/getWindow.py'
+      : Path.join(__dirname, '../../src/python/getWindow.py');
+    const command = `python ${pythonPath} ${windowName}`;
+    console.log(event.clientX);
+    console.log(event.clientY);
+    ChildProcess.exec(
+      command,
+      { maxBuffer: 1024 * 500 },
+      (error, stdout, stderr) => {
+        if (error != null) {
+          console.log(error);
+        } else if (stdout) {
+          console.log(stdout);
+        }
+      },
+    );
+    // ファンの位置を設定したらウィンドウを閉じる
+    window.close();
+  };
   /**
    * レンダー
    * @return {any} input tag
@@ -22,7 +53,11 @@ class SetFunPosition extends React.Component {
       height: '100%',
       color: '#ffffff',
     };
-    return <div style={clickAreaStyle}>ファンの場所をクリックしてね。</div>;
+    return (
+      <div style={clickAreaStyle} onClick={this.onClickEvent}>
+        ファンの場所をクリックしてね。
+      </div>
+    );
   }
 }
 

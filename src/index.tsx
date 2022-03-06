@@ -55,7 +55,6 @@ class StartButton extends React.Component<{ windowName: string }> {
       console.log('error');
     }
     // SetWindowNameBoxから値を取得する
-    console.log(this.props.windowName);
     const windowName = this.props.windowName;
 
     // python を呼び出す
@@ -181,6 +180,7 @@ class SetWindowNameBox extends React.Component {
   };
   handleOnChange = (e: any) => {
     this.setState({ inputValue: e.target.value });
+    ipcRenderer.invoke('set-fun', e.target.value);
   };
   /**
    * レンダー
