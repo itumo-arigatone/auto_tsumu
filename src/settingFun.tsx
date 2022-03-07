@@ -15,27 +15,30 @@ class SetFunPosition extends React.Component {
    * @param {any} event
    * @return {void}
    */
-  onClickEvent = (event: any) => {
-    const windowName = ipcRenderer.invoke('get-fun', '');
+  onClickEvent = async (event: any) => {
+    let windowName = '';
+    windowName = await ipcRenderer.invoke('get-fun', '');
     console.log(windowName);
     const isDevelopment = process.env.NODE_ENV === 'development';
     const pythonPath = isDevelopment
       ? './src/python/getWindow.py'
       : Path.join(__dirname, '../../src/python/getWindow.py');
     const command = `python ${pythonPath} ${windowName}`;
-    console.log(event.clientX);
-    console.log(event.clientY);
-    ChildProcess.exec(
+    let positionArray: Array<String> = [];
+    await ChildProcess.exec(
       command,
       { maxBuffer: 1024 * 500 },
       (error, stdout, stderr) => {
         if (error != null) {
           console.log(error);
-        } else if (stdout) {
+        } else {
           console.log(stdout);
+          positionArray = stdout.split(" ");
         }
       },
     );
+    const positionX = event.clientX;
+    const positionY = event.clientY;
     // ファンの位置を設定したらウィンドウを閉じる
     window.close();
   };

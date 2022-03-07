@@ -180,7 +180,7 @@ class SetWindowNameBox extends React.Component {
   };
   handleOnChange = (e: any) => {
     this.setState({ inputValue: e.target.value });
-    ipcRenderer.invoke('set-fun', e.target.value);
+    ipcRenderer.invoke('set-name', e.target.value);
   };
   /**
    * レンダー

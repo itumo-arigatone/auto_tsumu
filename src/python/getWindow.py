@@ -10,7 +10,8 @@ def GetWindowRectFromName(TargetWindowTitle):
     TargetWindowHandle = ctypes.windll.user32.FindWindowW(0, TargetWindowTitle)
     Rectangle = ctypes.wintypes.RECT()
     ctypes.windll.user32.GetWindowRect(TargetWindowHandle, ctypes.pointer(Rectangle))
+    print(Rectangle.left, Rectangle.top, Rectangle.right, Rectangle.bottom)
     return (Rectangle.left, Rectangle.top, Rectangle.right, Rectangle.bottom)
 
 if __name__ == '__main__':
-    GetWindowRectFromName(args[0])
+    GetWindowRectFromName(args[1])

@@ -76,7 +76,7 @@ ipcMain.handle('logger', (event, str) => {
 })
 
 let windowName = "";
-ipcMain.handle('set-fun', (event, str) => {
+ipcMain.handle('set-name', (event, str) => {
   windowName = str;
   return;
 })
