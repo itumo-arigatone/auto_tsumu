@@ -24,6 +24,9 @@ logging.basicConfig(filename=args[3], level=logging.INFO)
 # logging のみの書き方
 logging.info('info %s', args[1])
 
+funX = int(args[4])
+funY = int(args[5])
+
 def getEndCommand():
     global quit_flg
     while not quit_flg:
@@ -152,8 +155,8 @@ def makeRoute(startNode, group, result):
     return makeRoute(start, gr, result)
 
 def tapFan():
-    pyautogui.mouseDown(window_position[0] + 400, window_position[1] + 855, button='left')
-    pyautogui.mouseUp(window_position[0] + 400, window_position[1] + 855, button='left')
+    pyautogui.mouseDown(window_position[0] + funX, window_position[1] + funY, button='left')
+    pyautogui.mouseUp(window_position[0] + funX, window_position[1] + funY, button='left')
     logging.debug('debug %s', 'tapFan')
 
 def connectTsumu(array):

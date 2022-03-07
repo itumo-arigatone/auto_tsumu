@@ -4,3 +4,4 @@ node_modules/
 auto_tsumu
 product
 log/
+__pycache__/

@@ -117,7 +117,7 @@ function menubarSetting(): void {
             // 開発者ツールを起動する
             // const isDevelopment = process.env.NODE_ENV === 'development';
             // if (isDevelopment) {
-            find.webContents.openDevTools();
+            // find.webContents.openDevTools();
             // }
             find.setPosition(0, 0);
 

@@ -5,6 +5,7 @@ import { ipcRenderer } from 'electron';
 import CSS from 'csstype';
 import { Scrollbar } from 'react-scrollbars-custom';
 import Path from 'path';
+import Fs from 'fs';
 import StartButtonImg from './style/images/start_button.png';
 import backgroudImg from './style/images/wallpaper.png';
 import WindowImg from './style/images/window.png';
@@ -56,7 +57,6 @@ class StartButton extends React.Component<{ windowName: string }> {
     }
     // SetWindowNameBoxから値を取得する
     const windowName = this.props.windowName;
-
     // python を呼び出す
     console.log(process.env.NODE_ENV);
     const isDevelopment = process.env.NODE_ENV === 'development';
@@ -72,8 +72,13 @@ class StartButton extends React.Component<{ windowName: string }> {
     const logPath = isDevelopment
       ? './dist/logger.log'
       : Path.join(__dirname, '../../log/logger.log');
+    const settingPath: string = isDevelopment
+      ? './dist/setting.json'
+      : Path.join(__dirname, './setting.json');
+    const funPosition = JSON.parse(Fs.readFileSync(settingPath, 'utf8'));
+
     // python処理実行 python {パス} {Vysorウィンドウ名} {画像格納先パス} {logファイルの格納先パス}
-    const command = `python ${pythonPath} ${windowName} ${imagePath} ${logPath}`;
+    const command = `python ${pythonPath} ${windowName} ${imagePath} ${logPath} ${funPosition.funX} ${funPosition.funY}`;
     ChildProcess.exec(
       command,
       { maxBuffer: 1024 * 500 },

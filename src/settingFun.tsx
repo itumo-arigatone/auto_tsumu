@@ -4,7 +4,9 @@ import ChildProcess from 'child_process';
 import { ipcRenderer } from 'electron';
 import Path from 'path';
 import CSS from 'csstype';
-
+import Fs from 'fs';
+import Util from 'util';
+const exec = Util.promisify(ChildProcess.exec);
 /**
  * setting fun position
  * @return {void}
@@ -18,27 +20,26 @@ class SetFunPosition extends React.Component {
   onClickEvent = async (event: any) => {
     let windowName = '';
     windowName = await ipcRenderer.invoke('get-fun', '');
-    console.log(windowName);
     const isDevelopment = process.env.NODE_ENV === 'development';
     const pythonPath = isDevelopment
       ? './src/python/getWindow.py'
       : Path.join(__dirname, '../../src/python/getWindow.py');
     const command = `python ${pythonPath} ${windowName}`;
-    let positionArray: Array<String> = [];
-    await ChildProcess.exec(
-      command,
-      { maxBuffer: 1024 * 500 },
-      (error, stdout, stderr) => {
-        if (error != null) {
-          console.log(error);
-        } else {
-          console.log(stdout);
-          positionArray = stdout.split(" ");
-        }
-      },
-    );
-    const positionX = event.clientX;
-    const positionY = event.clientY;
+    let positionArray: Array<string> = [];
+    const res = await exec(command, { maxBuffer: 1024 * 500 });
+    console.log(res.stdout);
+    positionArray = res.stdout.split(' ');
+    const settingPath = Path.join(__dirname, './setting.json');
+    console.log(positionArray);
+    const funPosition = {
+      funX: event.clientX - parseInt(positionArray[0], 10),
+      funY: event.clientY - parseInt(positionArray[1], 10),
+    };
+    Fs.writeFile(settingPath, JSON.stringify(funPosition), function (err) {
+      if (err) {
+        throw err;
+      }
+    });
     // ファンの位置を設定したらウィンドウを閉じる
     window.close();
   };
