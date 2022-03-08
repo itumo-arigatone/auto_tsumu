@@ -19,7 +19,7 @@
       "main": "./dist/main.js"
     },
     "extraResources": [
-      "src/python/tsumu.py",
+      "src/python/*.py",
       "log/logger.log",
       "img/"
     ],
@@ -51,7 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
     "copy-webpack-plugin": "^9.1.0",
-    "electron": "^13.1.7",
+    "electron": "^13.3.0",
     "electron-builder": "^22.11.7",
     "eslint": "^7.31.0",
     "eslint-config-google": "^0.14.0",

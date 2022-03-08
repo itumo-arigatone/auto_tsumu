@@ -29,8 +29,9 @@ class SetFunPosition extends React.Component {
     const res = await exec(command, { maxBuffer: 1024 * 500 });
     console.log(res.stdout);
     positionArray = res.stdout.split(' ');
-    const settingPath = Path.join(__dirname, './setting.json');
-    console.log(positionArray);
+    const settingPath = isDevelopment
+      ? './dist/setting.json'
+      : Path.join(__dirname, '../../setting.json');
     const funPosition = {
       funX: event.clientX - parseInt(positionArray[0], 10),
       funY: event.clientY - parseInt(positionArray[1], 10),

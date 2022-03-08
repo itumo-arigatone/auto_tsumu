@@ -74,7 +74,7 @@ class StartButton extends React.Component<{ windowName: string }> {
       : Path.join(__dirname, '../../log/logger.log');
     const settingPath: string = isDevelopment
       ? './dist/setting.json'
-      : Path.join(__dirname, './setting.json');
+      : Path.join(__dirname, '../../setting.json');
     const funPosition = JSON.parse(Fs.readFileSync(settingPath, 'utf8'));
 
     // python処理実行 python {パス} {Vysorウィンドウ名} {画像格納先パス} {logファイルの格納先パス}
