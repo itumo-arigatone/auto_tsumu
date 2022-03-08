@@ -19,7 +19,7 @@
       "main": "./dist/main.js"
     },
     "extraResources": [
-      "src/python/tsumu.py",
+      "src/python/*.py",
       "log/logger.log",
       "img/"
     ],
