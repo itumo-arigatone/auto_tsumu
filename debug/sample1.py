@@ -142,56 +142,27 @@ def gamma_correction(img, gamma):
     return cv2.LUT(img, table)
 
 def hsv_decision(rgb):
-    # BGRからHSVに変換
-    imgBoxHsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
-
-    # HSV平均値を取得
-    # flattenで一次元化しmeanで平均を取得 
-    h = round(imgBoxHsv.T[0].flatten().mean(), -1)
-    s = round(imgBoxHsv.T[1].flatten().mean(), -1)
-    v = round(imgBoxHsv.T[2].flatten().mean(), -1)
-    # ダサすぎる
-    if h <= 36:
-        h = 0
-    elif 36 < h <= 72:
-        h = 37
-    elif 72 < h <= 108:
-        h = 73
-    elif 108 < h <= 144:
-        h = 109
-    elif 144 < h <= 180:
-        h = 145
-    
-    if s <= 51:
-        s = 0
-    elif 51 < s <= 102:
-        s = 52
-    elif 102 < s <= 153:
-        s = 103
-    elif 153 < s <= 204:
-        s = 154
-    elif 204 < s <= 255:
-        s = 205
-
-    if v <= 51:
-        v = 0
-    elif 51 < v <= 102:
-        v = 52
-    elif 102 < v <= 153:
-        v = 103
-    elif 153 < v <= 204:
-        v = 154
-    elif 204 < v <= 255:
-        v = 205
-
-    # HSV平均値を出力
-    print("Hue: %.2f" % (h))
-    print("Salute: %.2f" % (s))
-    print("Value: %.2f" % (v))
+    # k means を使用する
+    Z = rgb.reshape((-1,3))
+    # convert to np.float32
+    Z = np.float32(Z)
+    # define criteria, number of clusters(K) and apply kmeans()
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    K = 4
+    ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+    # Now convert back into uint8, and make original image
+    center = np.uint8(center)
+    res = center[label.flatten()]
+    res2 = res.reshape((rgb.shape))
+    cv2.imshow('res2',res2)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    # TODO k-meansした中で一番割合の大きい色のRGBを抽出(k=1で解決？)
+    # TODO hsv -> RGBに変更
     return {
-        "h": h,
-        "s": s,
-        "v": v
+        "h": 1,
+        "s": 2,
+        "v": 3
     }
 
 def main():
@@ -201,9 +172,6 @@ def main():
     img = cv2.imread(img_path,0)
     color_img = cv2.imread(img_path)
     ancestor = cv2.imread(img_path)
-
-    # コントラスト、明るさを変更する。
-    ancestor = gamma_correction(ancestor, gamma=1.8)
 
     # トリミング
     # x, y = 0, 450
@@ -217,7 +185,7 @@ def main():
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-        crop = ancestor[i[1]-6:i[1]+6, i[0]-6:i[0]+6]
+        crop = ancestor[i[1]-45:i[1]+45, i[0]-45:i[0]+45]
 
         hsv_color = hsv_decision(crop)
 
