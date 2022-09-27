@@ -4,7 +4,7 @@ import math
 import pyautogui
 import sys
 
-img_path = "../img/sample.png"
+img_path = "./img/sample.png"
 # windowの左上角の座標を取得する
 window_position = pyautogui.position()
 
@@ -42,7 +42,7 @@ def findNearPlaceTsumu(group):
                 for k in gr:
                     x = (int(i["center_x"]) - int(k["center_x"])) ** 2
                     y = (int(i["center_y"]) - int(k["center_y"])) ** 2
-                    if 0 < math.sqrt(x+y) <= 140:
+                    if 0 < math.sqrt(x+y) <= 100:
                         near.append(k)
                         color_group.append(k)
                 if len(near) == 0:
@@ -57,7 +57,7 @@ def findNearPlaceTsumu(group):
                             break
                         x = (int(j["center_x"]) - int(k["center_x"])) ** 2
                         y = (int(j["center_y"]) - int(k["center_y"])) ** 2
-                        if 0 < math.sqrt(x+y) <= 140:
+                        if 0 < math.sqrt(x+y) <= 100:
                             # 新たなnearができる
                             new_near.append(k)
                             color_group.append(k)
@@ -75,11 +75,8 @@ def findNearPlaceTsumu(group):
 def findRoute(group):
     # 開始ノード取得
     start = getStartNode(group)
-    # TODO 以下、再帰関数 つながるところからつながるところを見つける
-    # TODO つながるところを発見する
     group.remove(start)
     routeArray = makeRoute(start, group, [start])
-        # TODO 開始ノードが[0]で,1,2,3,4
     return routeArray
 
 def getStartNode(group):
@@ -88,7 +85,7 @@ def getStartNode(group):
         for j in group:
             x = (int(i["center_x"]) - int(j["center_x"])) ** 2
             y = (int(i["center_y"]) - int(j["center_y"])) ** 2
-            if 0 < math.sqrt(x+y) <= 140:
+            if 0 < math.sqrt(x+y) <= 100:
                 node += 1
         if node == 1:
             return i
@@ -101,7 +98,7 @@ def makeRoute(startNode, group, result):
     for i in gr:
         x = (int(start["center_x"]) - int(i["center_x"])) ** 2
         y = (int(start["center_y"]) - int(i["center_y"])) ** 2
-        if 0 < math.sqrt(x+y) <= 140:
+        if 0 < math.sqrt(x+y) <= 100:
             result.append(i)
             start = i
             gr.remove(i)
@@ -116,23 +113,6 @@ def tapFan():
     pyautogui.mouseDown(window_position[0] + 612, window_position[1] + 1316, button='left')
     pyautogui.mouseUp(window_position[0] + 612, window_position[1] + 1316, button='left')
 
-def connectTsumu(array):
-    # ここからPCのカーソルを操作する
-    # 中心点を繋ぐ処理
-    first = True
-    index = 0
-    for i in array:
-        # 移動
-        pyautogui.moveTo(window_position[0] + int(i["center_x"]), window_position[1] + int(i["center_y"]), duration=0.1)
-        if first:
-            # スタート地点からクリックする
-            pyautogui.mouseDown(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
-            first = False
-        index += 1
-        if index == len(array):
-            # クリックを解除
-            pyautogui.mouseUp(window_position[0] + int(i["center_x"]),window_position[1] + int(i["center_y"]), button='left')
-
 def gamma_correction(img, gamma):
     # テーブルを作成する。
     table = (np.arange(256) / 255) ** gamma * 255
@@ -142,6 +122,7 @@ def gamma_correction(img, gamma):
     return cv2.LUT(img, table)
 
 def hsv_decision(rgb):
+<<<<<<< HEAD
     # k means を使用する
     Z = rgb.reshape((-1,3))
     # convert to np.float32
@@ -159,6 +140,49 @@ def hsv_decision(rgb):
     cv2.destroyAllWindows()
     # TODO k-meansした中で一番割合の大きい色のRGBを抽出(k=1で解決？)
     # TODO hsv -> RGBに変更
+=======
+    # BGRからHSVに変換
+    imgBoxHsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
+
+    # HSV平均値を取得
+    # flattenで一次元化しmeanで平均を取得 
+    h = round(imgBoxHsv.T[0].flatten().mean(), -1)
+    s = round(imgBoxHsv.T[1].flatten().mean(), -1)
+    v = round(imgBoxHsv.T[2].flatten().mean(), -1)
+    # ダサすぎる
+
+    if h < 180/12*1:
+        h = 0
+    elif 180/12*1 < h <= 180/12*2:
+        h = 1
+    elif 180/12*2 < h <= 180/12*3:
+        h = 2
+    elif 180/12*3 < h <= 180/12*4:
+        h = 3
+    elif 180/12*4 < h <= 180/12*5:
+        h = 4
+    elif 180/12*5 < h <= 180/12*6:
+        h = 5
+    elif 180/12*6 < h <= 180/12*7:
+        h = 6
+    elif 180/12*7 < h <= 180/12*8:
+        h = 7
+    elif 180/12*8 < h <= 180/12*9:
+        h = 8
+    elif 180/12*9 < h <= 180/12*10:
+        h = 9
+    elif 180/12*10 < h <= 180/12*11:
+        h = 12
+    elif 180/12*11 < h <= 180/12*12:
+        h = 11
+
+    if s < 125:
+        s =50
+    else :
+        S =100
+
+    # HSV平均値を出力
+>>>>>>> f8248990d9ea216e3bd0051df33b066d8c099899
     return {
         "h": 1,
         "s": 2,
@@ -173,6 +197,7 @@ def main():
     color_img = cv2.imread(img_path)
     ancestor = cv2.imread(img_path)
 
+<<<<<<< HEAD
     # トリミング
     # x, y = 0, 450
     # h, w = 800, 720
@@ -180,12 +205,23 @@ def main():
     # img = img[y:y+h, x:x+w]
 
     circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=60,param2=15,minRadius=35,maxRadius=45)
+=======
+    # コントラスト、明るさを変更する。
+    ancestor = gamma_correction(ancestor, gamma=2.0)
+
+    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,40,param1=60,param2=15,minRadius=25,maxRadius=35)
+>>>>>>> f8248990d9ea216e3bd0051df33b066d8c099899
     circles = np.uint16(np.around(circles))
 
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
+<<<<<<< HEAD
         crop = ancestor[i[1]-45:i[1]+45, i[0]-45:i[0]+45]
+=======
+        crop = ancestor[i[1]-10:i[1]+10, i[0]-10:i[0]+10]
+        # crop = ancestor[i[1]-i[2]:i[1]+i[2], i[0]-i[2]:i[0]+i[2]]
+>>>>>>> f8248990d9ea216e3bd0051df33b066d8c099899
 
         hsv_color = hsv_decision(crop)
 
@@ -200,7 +236,7 @@ def main():
         cv2.circle(
             color_img,
             (k["center_x"], k["center_y"]),
-            45,
+            15,
             (k["color"]["h"], k["color"]["s"], k["color"]["v"]),
             -1
         )
@@ -212,6 +248,8 @@ def main():
             "v": k["color"]["v"]
             }
         )
+        # 色情報の取得用デバッグ
+        cv2.putText(ancestor, str(k["color"]["h"]), (k["center_x"], k["center_y"]), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
 
     color_list = getUniqueList(all_list)
 
@@ -220,36 +258,48 @@ def main():
     for i in color_list:
         sub = []
         for j in cercle_info:
-            if i["h"] == j["color"]["h"] and i["s"] == j["color"]["s"] and i["v"] == j["color"]["v"]:
+            if i["h"] == j["color"]["h"]:# and i["s"] == j["color"]["s"]:
                 sub.append(j)
         
         if len(sub) >= 3:
             group.append(sub)
-            print("create group")
     color_group = []
     for i in group:
+        # 近くのツムを見つけてグループ化
         color_group.append(findNearPlaceTsumu(i))
+    # 1つの配列にまとめる
+    alls_groups = sum(color_group, [])
+    all_groups = getUniqueList(alls_groups)
 
     # 繋げるツムの選択
-    most_length = 0
-    use_group = None
-    for i in color_group:
-        for k in i:
-            if len(k) > most_length:
-                most_length = len(k)
-                use_group = k
-    
-    if use_group != None:
-        # ルート検索,なぞる順に配列を作る
-        array = findRoute(getUniqueList(use_group))
-        print(array)
-    else:
-        print("tapFan")
-        tapFan()
-            
-    if len(array) < 3:
-        tapFan()
-        print("tapFan3IKA")
+    use_group = []
+    # 最大から3つになるまで取得
+    for i in range(len(all_groups)):
+        maxLength = max(len(v) for v in all_groups)
+        if maxLength > 2:
+            use_group.append(all_groups[[len(v) for v in all_groups].index(maxLength)])
+            # 大きい物から削除していく
+            all_groups.remove(all_groups[[len(v) for v in all_groups].index(maxLength)])
+
+
+    # ルート検索,なぞる順に配列を作る
+    for i in use_group:
+        uniqueArray = getUniqueList(i)
+        if len(uniqueArray) < 3:
+            continue
+
+        array = findRoute(uniqueArray)
+        if len(array) < 3:
+            continue
+        k = 0
+        for j in array:
+            k += 1
+            cv2.putText(color_img, str(k), (j["center_x"]-10, j["center_y"]-15), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
+
+    # 色の数値化Debug
+    # for i in cercle_info:
+    #    for j in i:
+    #         cv2.putText(color_img, str(j["color"]["h"]), (j["center_x"], j["center_y"]), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, 4)
 
     ############# Debug
     cv2.imshow('color', color_img)

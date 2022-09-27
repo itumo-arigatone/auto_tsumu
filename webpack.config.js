@@ -5,7 +5,10 @@ module.exports = {
   // Electronのレンダラプロセスで動作することを指定する
   target: 'electron-renderer',
   // 起点となるファイル
-  entry: './src/index.tsx',
+  entry: {
+    'index': './src/index.tsx',
+    'settingFun': './src/settingFun.tsx',
+  },
   // webpack watch したときに差分ビルドができる
   cache: true,
   // development は、 source map file を作成、再ビルド時間の短縮などの設定となる
@@ -16,7 +19,7 @@ module.exports = {
   // 出力先設定 __dirname は node でのカレントディレクトリのパスが格納される変数
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
   },
   // ファイルタイプ毎の処理を記述する
   module: {
@@ -38,6 +41,14 @@ module.exports = {
         // TypeScript をコンパイルする
         use: 'ts-loader',
       },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        // ローダーの指定
+        loader: 'file-loader',
+        options: {
+          name: 'style/images/[name].[ext]'
+        }
+      },
     ],
   },
   // 処理対象のファイルを記載する
@@ -53,6 +64,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './index.html',
+      chunks: ['index'],
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'settingFun.html',
+      template: './settingFun.html',
+      chunks: ['settingFun'],
     }),
   ],
 };

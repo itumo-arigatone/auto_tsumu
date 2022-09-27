@@ -1,46 +1,70 @@
 {
-  "name": "centerglassapp",
+  "name": "auto_tsumu",
   "version": "1.0.0",
   "description": "Create a Windows application with a transparent center.",
-  "main": "index.js",
+  "main": "./dist/main.js",
   "scripts": {
     "start": "electron ./dist/main.js",
     "build:main": "tsc",
-    "build:render": "webpack"
+    "build:render": "webpack",
+    "package:windows": "node createLogFile.js && webpack && electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.unkomorasi01.auto_tsumu",
+    "productName": "autoTsumu",
+    "directories": {
+      "output": "./product"
+    },
+    "extraMetadata": {
+      "main": "./dist/main.js"
+    },
+    "extraResources": [
+      "src/python/*.py",
+      "log/logger.log",
+      "img/"
+    ],
+    "files": [
+      "./dist/**/*.js",
+      "./dist/**/*.html",
+      "./icon/**/*",
+      "./dist/style/**/*.png"
+    ]
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/unkomorasi01/centerGlassApp.git"
+    "url": "git+https://github.com/unkomorasi01/auto_tsumu.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/unkomorasi01/centerGlassApp/issues"
+    "url": "https://github.com/unkomorasi01/auto_tsumu/issues"
   },
-  "homepage": "https://github.com/unkomorasi01/centerGlassApp#readme",
+  "homepage": "https://github.com/unkomorasi01/auto_tsumu#readme",
   "dependencies": {
-    "child_process": "^1.0.2",
     "eslint-loader": "^4.0.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
-    "@types/react": "^16.9.55",
-    "@types/react-dom": "^16.9.9",
-    "@typescript-eslint/eslint-plugin": "^4.6.1",
-    "@typescript-eslint/parser": "^4.6.1",
-    "electron": "^10.1.5",
-    "electron-builder": "^22.9.1",
-    "eslint": "^7.12.1",
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "^17.0.9",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
+    "copy-webpack-plugin": "^9.1.0",
+    "electron": "^13.3.0",
+    "electron-builder": "^22.11.7",
+    "eslint": "^7.31.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-react": "^7.21.5",
-    "html-webpack-plugin": "^4.5.0",
-    "prettier": "^2.1.2",
-    "ts-loader": "^8.0.9",
-    "typescript": "^4.0.5",
-    "webpack": "^5.4.0",
-    "webpack-cli": "^4.2.0"
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.2",
+    "prettier": "^2.3.2",
+    "react-scrollbars-custom": "^4.0.27",
+    "ts-loader": "^9.2.3",
+    "typescript": "^4.3.5",
+    "webpack": "^5.45.1",
+    "webpack-cli": "^4.7.2"
   }
 }

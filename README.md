@@ -4,36 +4,44 @@ I want automatic play tool for tsumu-tsumu.
 
 # Make execution environment for Win
 ## install python
-https://www.python.org/downloads/windows/
+https://www.python.org/downloads/windows/  
+This repository uses python 3.9.5
 
 ## install OpenCV
 1. Open cmd
 2. Execute below command ↓
-```sh
+```
 pip install opencv-python
 ```
 
 ## install PyAutoGui
 1. Open cmd
 2. Execute below command ↓
-```sh
+```
+pip install xlib
+pip install wheel
 pip install pyautogui
 ```
 
-## install pywinauto
-1. Open cmd
-2. Execute below command ↓
-```sh
-pip install pywinauto
+## build
+electron application build command
+```
+npm run build:render
+npm run build:main
+```
+render is move webpack command
+main is move tsc command  
+```
+package:windows
 ```
 
 ## install Vysor
 https://www.vysor.io/
 
-## use auto_tsum
-1. Play tsumu-tsumu
-2. Hover over the top left corner of the Vysor window
-3. Execute below command ↓
+## How to debug auto_tsumu
 ```sh
-python tsumu.py
+npm start
 ```
+1. Start the Vysor. And make Android controllable.
+2. Enter the name of the Vysor window in the textbox.
+3. Click the start button.

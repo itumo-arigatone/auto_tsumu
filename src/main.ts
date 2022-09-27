@@ -1,5 +1,4 @@
-import {app, BrowserWindow, ipcMain} from 'electron';
-import fs from 'fs';
+import {app, Menu, BrowserWindow, ipcMain} from 'electron';
 
 // セキュアな Electron の構成
 // 参考: https://qiita.com/pochman/items/64b34e9827866664d436
@@ -7,28 +6,37 @@ let win:any
 const createWindow = (): void => {
   // レンダープロセスとなる、ウィンドウオブジェクトを作成する。
   win = new BrowserWindow({
-    width: 900,
-    height: 900,
-    transparent: true,
-    frame: false,
-    resizable: false,
-    alwaysOnTop: true,
+    width: 370,
+    height: 380,
+    frame: true,
+    resizable: true,
     webPreferences: {
       // ローカルで完結するためtrueにする
       nodeIntegration: true,
+      contextIsolation: false,
     },
   });
   // 読み込む index.html。
   // tsc でコンパイルするので、出力先の dist の相対パスで指定する。
-  win.loadFile('./index.html');
-
-  fs.writeFileSync(
-    './dist/bounds.json', JSON.stringify(win.getPosition())
-  );
+  const path = require('path');
+  win.loadFile(path.join(__dirname, './index.html'));
 
   // 開発者ツールを起動する
-  // win.webContents.openDevTools();
+  // const isDevelopment = process.env.NODE_ENV === 'development';
+  // if (isDevelopment) {
+  //  win.webContents.openDevTools();
+  // } 
+  win.setPosition(50, 50);
+
+  // ブラウザウィンドウを閉じたときのイベントハンドラ
+  win.on('closed', () => {
+    // 閉じたウィンドウオブジェクトにはアクセスできない
+    win = null
+  })
 };
+
+// メニューバー設定
+menubarSetting();
 
 // Electronの起動準備が終わったら、ウィンドウを作成する。
 app.whenReady().then(createWindow);
@@ -66,3 +74,64 @@ ipcMain.handle('logger', (event, str) => {
   console.log(str);
   return;
 })
+
+let windowName = "";
+ipcMain.handle('set-name', (event, str) => {
+  windowName = str;
+  return;
+})
+ipcMain.handle('get-fun', (event, str) => {
+  console.log(windowName);
+  return windowName;
+})
+
+// メニューバーの設定
+function menubarSetting(): void {
+  let find:any
+  const template = [
+    {
+      label: '識別設定',
+      submenu: [
+        {
+          label: 'ツム発見設定',
+          click() {}
+        },
+        {
+          label: 'ファン設定',
+          click() {
+            
+            find = new BrowserWindow({
+              frame: false,
+              resizable: false,
+              transparent: true,
+              webPreferences: {
+                // ローカルで完結するためtrueにする
+                nodeIntegration: true,
+                contextIsolation: false,
+              },
+            });
+            find.maximize();
+            const path = require('path');
+            find.loadFile(path.join(__dirname, './settingFun.html'));
+
+            // 開発者ツールを起動する
+            // const isDevelopment = process.env.NODE_ENV === 'development';
+            // if (isDevelopment) {
+            // find.webContents.openDevTools();
+            // }
+            find.setPosition(0, 0);
+
+            // ブラウザウィンドウを閉じたときのイベントハンドラ
+            find.on('closed', () => {
+              // 閉じたウィンドウオブジェクトにはアクセスできない
+              find = null
+            })
+          }
+        },
+      ],
+    },
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+  
