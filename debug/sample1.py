@@ -1,12 +1,10 @@
 import cv2
 import numpy as np
 import math
-import pyautogui
 import sys
 
-img_path = "./img/sample.png"
+img_path = "../img/sample.png"
 # windowの左上角の座標を取得する
-window_position = pyautogui.position()
 
 # ダブりを消す処理
 def getUniqueList(seq):
@@ -109,10 +107,6 @@ def makeRoute(startNode, group, result):
         return result
     return makeRoute(start, gr, result)
 
-def tapFan():
-    pyautogui.mouseDown(window_position[0] + 612, window_position[1] + 1316, button='left')
-    pyautogui.mouseUp(window_position[0] + 612, window_position[1] + 1316, button='left')
-
 def gamma_correction(img, gamma):
     # テーブルを作成する。
     table = (np.arange(256) / 255) ** gamma * 255
@@ -122,7 +116,6 @@ def gamma_correction(img, gamma):
     return cv2.LUT(img, table)
 
 def hsv_decision(rgb):
-<<<<<<< HEAD
     # k means を使用する
     Z = rgb.reshape((-1,3))
     # convert to np.float32
@@ -140,49 +133,6 @@ def hsv_decision(rgb):
     cv2.destroyAllWindows()
     # TODO k-meansした中で一番割合の大きい色のRGBを抽出(k=1で解決？)
     # TODO hsv -> RGBに変更
-=======
-    # BGRからHSVに変換
-    imgBoxHsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
-
-    # HSV平均値を取得
-    # flattenで一次元化しmeanで平均を取得 
-    h = round(imgBoxHsv.T[0].flatten().mean(), -1)
-    s = round(imgBoxHsv.T[1].flatten().mean(), -1)
-    v = round(imgBoxHsv.T[2].flatten().mean(), -1)
-    # ダサすぎる
-
-    if h < 180/12*1:
-        h = 0
-    elif 180/12*1 < h <= 180/12*2:
-        h = 1
-    elif 180/12*2 < h <= 180/12*3:
-        h = 2
-    elif 180/12*3 < h <= 180/12*4:
-        h = 3
-    elif 180/12*4 < h <= 180/12*5:
-        h = 4
-    elif 180/12*5 < h <= 180/12*6:
-        h = 5
-    elif 180/12*6 < h <= 180/12*7:
-        h = 6
-    elif 180/12*7 < h <= 180/12*8:
-        h = 7
-    elif 180/12*8 < h <= 180/12*9:
-        h = 8
-    elif 180/12*9 < h <= 180/12*10:
-        h = 9
-    elif 180/12*10 < h <= 180/12*11:
-        h = 12
-    elif 180/12*11 < h <= 180/12*12:
-        h = 11
-
-    if s < 125:
-        s =50
-    else :
-        S =100
-
-    # HSV平均値を出力
->>>>>>> f8248990d9ea216e3bd0051df33b066d8c099899
     return {
         "h": 1,
         "s": 2,
@@ -197,7 +147,6 @@ def main():
     color_img = cv2.imread(img_path)
     ancestor = cv2.imread(img_path)
 
-<<<<<<< HEAD
     # トリミング
     # x, y = 0, 450
     # h, w = 800, 720
@@ -205,23 +154,12 @@ def main():
     # img = img[y:y+h, x:x+w]
 
     circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=60,param2=15,minRadius=35,maxRadius=45)
-=======
-    # コントラスト、明るさを変更する。
-    ancestor = gamma_correction(ancestor, gamma=2.0)
-
-    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,40,param1=60,param2=15,minRadius=25,maxRadius=35)
->>>>>>> f8248990d9ea216e3bd0051df33b066d8c099899
     circles = np.uint16(np.around(circles))
 
     cercle_info = []
     for i in circles[0,:]:
         # 中心周辺の色を取得する
-<<<<<<< HEAD
         crop = ancestor[i[1]-45:i[1]+45, i[0]-45:i[0]+45]
-=======
-        crop = ancestor[i[1]-10:i[1]+10, i[0]-10:i[0]+10]
-        # crop = ancestor[i[1]-i[2]:i[1]+i[2], i[0]-i[2]:i[0]+i[2]]
->>>>>>> f8248990d9ea216e3bd0051df33b066d8c099899
 
         hsv_color = hsv_decision(crop)
 
